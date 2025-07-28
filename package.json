@@ -1,0 +1,22 @@
+{
+  "name": "scale-interface",
+  "version": "1.0.0",
+  "description": "Console application for Sterling 7600 Scale RS-232 communication testing",
+  "main": "src/index.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node src/index.js",
+    "start:scale": "node src/index.js --mode=scale --diagnostics",
+    "start:hardware": "node src/index.js --mode=hardware-testing --diagnostics", 
+    "start:test": "node src/index.js --mode=setup-testing --diagnostics",
+    "dev": "node --watch src/index.js",
+    "test": "node src/index.js --mode=setup-testing"
+  },
+  "dependencies": {
+    "commander": "^14.0.0",
+    "joi": "^17.13.3",
+    "serialport": "^13.0.0",
+    "winston": "^3.17.0"
+  }
+}

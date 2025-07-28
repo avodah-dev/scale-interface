@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:bun.sh)",
+      "WebFetch(domain:deno.com)",
+      "WebFetch(domain:nodejs.org)"
+    ],
+    "deny": []
+  }
+}

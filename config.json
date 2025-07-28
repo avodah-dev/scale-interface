@@ -1,0 +1,65 @@
+{
+  "serial": {
+    "baudRate": 9600,
+    "dataBits": 8,
+    "stopBits": 1,
+    "parity": "none",
+    "timeout": 5000,
+    "autoOpen": false,
+    "path": "/dev/cu.usbserial-BG011ORJ"
+  },
+  "commands": {
+    "grossWeight": "SGW\r",
+    "netWeight": "SNW\r",
+    "count": "SCO\r",
+    "pieceWeight": "SPW\r",
+    "zero": "ZRO\r",
+    "tare": "ATW\r",
+    "print": "SRP\r",
+    "version": "SVN\r"
+  },
+  "polling": {
+    "interval": 1000,
+    "timeout": 5000,
+    "retries": 3,
+    "minInterval": 500,
+    "maxInterval": 10000
+  },
+  "logging": {
+    "level": "debug",
+    "format": "json",
+    "includeRaw": true,
+    "maxFiles": 10,
+    "maxSize": "10m",
+    "datePattern": "YYYY-MM-DD"
+  },
+  "mode": "hardware-testing",
+  "testing": {
+    "mockResponses": {
+      "SGW\r": "Gross 100.55 lb.\r\n",
+      "SNW\r": "Net 95.30 lb.\r\n", 
+      "SCO\r": "Count 157 Pieces\r\n",
+      "SPW\r": "Piece Weight 0.6350 lb.\r\n",
+      "ZRO\r": "Zero Complete\r\n",
+      "ATW\r": "Tare Acquired\r\n",
+      "SRP\r": "100.55 lb. Gross\r\n",
+      "SVN\r": "V 2.01\r\n"
+    },
+    "errorResponses": {
+      "Err.80": "Serial command data error",
+      "Err.81": "Unknown serial command",
+      "ULULUL": "Under-load condition",
+      "OLOLOL": "Over-load condition", 
+      "-------": "A/D acquisition in progress"
+    },
+    "simulateErrors": false,
+    "errorRate": 0.05,
+    "responseDelay": 100
+  },
+  "validation": {
+    "connectionTimeout": 10000,
+    "responseTimeout": 2000,
+    "maxPacketLoss": 0.05,
+    "minReadings": 100
+  }
+}
