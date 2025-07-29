@@ -2,7 +2,7 @@
 
 ## Overview
 
-This console application validates RS-232 communication with Sterling 7600 industrial scales using Node.js runtime. It serves as the foundation for Phase 2 client site validation and Phase 3 full system development.
+This TypeScript console application validates RS-232 communication with Sterling 7600 industrial scales using TSX (TypeScript Execute) for zero-config TypeScript execution. It serves as the foundation for Phase 2 client site validation and Phase 3 full system development.
 
 ## Quick Start
 
@@ -18,6 +18,9 @@ pnpm start --mode=testing --time=60
 
 # Run with real scale hardware (requires FTDI adapter)
 pnpm start --mode=scale --diagnostics
+
+# Type check the codebase
+pnpm run typecheck
 ```
 
 ## Success Criteria ✅
@@ -34,13 +37,13 @@ All Phase 1a success criteria have been validated with mock scale simulation:
 
 ## Architecture
 
-### Core Modules (Electron-Ready)
+### Core Modules (TypeScript, Electron-Ready)
 
-- **ConfigManager** - JSON configuration loading and validation
-- **SerialManager** - Connection, reconnection, and error recovery
-- **ScaleController** - Sterling 7600 protocol and command parsing
-- **MockScaleController** - Testing mode simulation
-- **DataLogger** - Structured logging with timestamps
+- **ConfigManager** - JSON configuration loading and validation with full type safety
+- **SerialManager** - Connection, reconnection, and error recovery with typed events
+- **ScaleController** - Sterling 7600 protocol and command parsing with typed responses
+- **MockScaleController** - Testing mode simulation with same interface as real controller
+- **DataLogger** - Structured logging with timestamps and typed log entries
 
 ### Sterling 7600 Protocol Support
 
@@ -87,6 +90,9 @@ pnpm start --mode=scale --time=600
 
 # Validate success criteria
 node testing-archive/validate-success-criteria.js
+
+# Type check without running
+pnpm run typecheck
 ```
 
 ## Logging
@@ -100,7 +106,7 @@ Structured logs are written to `logs/` directory:
 ## Hardware Requirements
 
 ### Phase 1 (Testing Mode)
-- Node.js runtime
+- Node.js runtime with TypeScript (via TSX)
 - No hardware required (mock scale)
 
 ### Phase 2 (Client Site Validation)  
@@ -128,13 +134,21 @@ This console application is ready for Phase 1b hardware testing and Phase 2 clie
 ## Development
 
 ```bash
-# Development mode with auto-reload
+# Development mode with auto-reload (using TSX watch)
 pnpm run dev
 
 # Run with specific config
 cp config.json config-custom.json
 # Edit config-custom.json
 CONFIG_FILE=config-custom.json pnpm start
+
+# Run TypeScript compiler checks
+pnpm run typecheck
 ```
 
-All modules are designed for seamless integration into the future Electron application with minimal changes required.
+All modules are written in TypeScript and designed for seamless integration into the future Electron application with minimal changes required. The codebase features:
+
+- **Full Type Safety**: Comprehensive TypeScript types for all modules and interfaces
+- **Zero-Config Execution**: TSX enables direct TypeScript execution without compilation
+- **Strict Type Checking**: Catches potential errors at development time
+- **IDE Support**: Full IntelliSense and auto-completion in TypeScript-aware editors
