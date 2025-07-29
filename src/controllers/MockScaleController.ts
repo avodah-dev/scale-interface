@@ -1,37 +1,94 @@
 import { EventEmitter } from 'events';
+import type { Config } from '../managers/ConfigManager';
+import type DataLogger from '../utils/DataLogger';
+
+interface MockState {
+  grossWeight: number;
+  netWeight: number;
+  count: number;
+  pieceWeight: number;
+  unit: string;
+  isZeroed: boolean;
+  hasTare: boolean;
+  isInMotion: boolean;
+}
+
+interface ScaleStats {
+  commandsSent: number;
+  responsesReceived: number;
+  errors: number;
+  timeouts: number;
+  startTime: number | null;
+  lastReading: number | null;
+}
+
+interface ParsedResponse {
+  type: string;
+  value?: number | string;
+  unit?: string;
+  status: 'ok' | 'error' | 'complete';
+  error?: string;
+}
+
+interface ScaleResponse {
+  raw: string;
+  parsed: ParsedResponse;
+  command: string;
+  timestamp: number;
+}
+
+interface ConnectionInfo {
+  isConnected: boolean;
+  isConnecting: boolean;
+  reconnectAttempts: number;
+  maxReconnectAttempts: number;
+  lastActivity: number | null;
+  connectionStartTime: number | null;
+  path: string;
+}
+
+interface ExtendedStats extends ScaleStats {
+  runtime: number;
+  packetLoss: number;
+  isPolling: boolean;
+  connectionInfo: ConnectionInfo;
+}
 
 class MockScaleController extends EventEmitter {
-  constructor(config, logger) {
+  private config: Config;
+  private logger: DataLogger;
+  private isConnected: boolean = false;
+  private isPolling: boolean = false;
+  private pollingTimer: NodeJS.Timeout | null = null;
+  
+  private stats: ScaleStats = {
+    commandsSent: 0,
+    responsesReceived: 0,
+    errors: 0,
+    timeouts: 0,
+    startTime: null,
+    lastReading: null
+  };
+
+  // Mock scale state
+  private mockState: MockState = {
+    grossWeight: 100.55,
+    netWeight: 95.30,
+    count: 157,
+    pieceWeight: 0.6350,
+    unit: 'lb',
+    isZeroed: false,
+    hasTare: false,
+    isInMotion: false
+  };
+
+  constructor(config: Config, logger: DataLogger) {
     super();
     this.config = config;
     this.logger = logger;
-    this.isConnected = false;
-    this.isPolling = false;
-    this.pollingTimer = null;
-    
-    this.stats = {
-      commandsSent: 0,
-      responsesReceived: 0,
-      errors: 0,
-      timeouts: 0,
-      startTime: null,
-      lastReading: null
-    };
-
-    // Mock scale state
-    this.mockState = {
-      grossWeight: 100.55,
-      netWeight: 95.30,
-      count: 157,
-      pieceWeight: 0.6350,
-      unit: 'lb',
-      isZeroed: false,
-      hasTare: false,
-      isInMotion: false
-    };
   }
 
-  async listAvailablePorts() {
+  async listAvailablePorts(): Promise<any[]> {
     // Mock FTDI port
     return [
       {
@@ -43,7 +100,7 @@ class MockScaleController extends EventEmitter {
     ];
   }
 
-  async connect(portPath = null) {
+  async connect(portPath: string | null = null): Promise<void> {
     this.logger.info('Mock scale connecting', { portPath });
     
     // Simulate connection time
@@ -58,14 +115,14 @@ class MockScaleController extends EventEmitter {
     });
   }
 
-  disconnect() {
+  disconnect(): void {
     this.logger.info('Mock scale disconnecting');
     this._stopPolling();
     this.isConnected = false;
     this.emit('disconnected');
   }
 
-  async sendCommand(commandName, retries = null) {
+  async sendCommand(commandName: string, _retries: number | null = null): Promise<ScaleResponse> {
     if (!this.isConnected) {
       throw new Error('Mock scale not connected');
     }
@@ -88,14 +145,14 @@ class MockScaleController extends EventEmitter {
         Math.random() < this.config.testing.errorRate) {
       this.stats.errors++;
       const errorKeys = Object.keys(this.config.testing.errorResponses);
-      const randomError = errorKeys[Math.floor(Math.random() * errorKeys.length)];
+      const randomError = errorKeys[Math.floor(Math.random() * errorKeys.length)]!;
       
-      const errorResponse = {
+      const errorResponse: ScaleResponse = {
         raw: randomError,
         parsed: {
           type: 'error',
           status: 'error',
-          error: this.config.testing.errorResponses[randomError]
+          error: this.config.testing.errorResponses[randomError]!
         },
         command: commandName,
         timestamp: Date.now()
@@ -117,7 +174,7 @@ class MockScaleController extends EventEmitter {
     return response;
   }
 
-  _generateResponse(commandName) {
+  private _generateResponse(commandName: string): ScaleResponse {
     const timestamp = Date.now();
     
     switch (commandName) {
@@ -231,40 +288,40 @@ class MockScaleController extends EventEmitter {
   }
 
   // Convenience methods (same interface as real ScaleController)
-  async getGrossWeight() {
+  async getGrossWeight(): Promise<ScaleResponse> {
     return await this.sendCommand('grossWeight');
   }
 
-  async getNetWeight() {
+  async getNetWeight(): Promise<ScaleResponse> {
     return await this.sendCommand('netWeight');
   }
 
-  async getCount() {
+  async getCount(): Promise<ScaleResponse> {
     return await this.sendCommand('count');
   }
 
-  async getPieceWeight() {
+  async getPieceWeight(): Promise<ScaleResponse> {
     return await this.sendCommand('pieceWeight');
   }
 
-  async zero() {
+  async zero(): Promise<ScaleResponse> {
     return await this.sendCommand('zero');
   }
 
-  async tare() {
+  async tare(): Promise<ScaleResponse> {
     return await this.sendCommand('tare');
   }
 
-  async getVersion() {
+  async getVersion(): Promise<ScaleResponse> {
     return await this.sendCommand('version');
   }
 
-  async print() {
+  async print(): Promise<ScaleResponse> {
     return await this.sendCommand('print');
   }
 
   // Polling functionality
-  startPolling(commandName = 'grossWeight') {
+  startPolling(commandName: string = 'grossWeight'): void {
     if (this.isPolling) {
       this.logger.warn('Mock polling already active');
       return;
@@ -281,7 +338,7 @@ class MockScaleController extends EventEmitter {
     this._poll(commandName);
   }
 
-  _poll(commandName) {
+  private _poll(commandName: string): void {
     if (!this.isPolling) {
       return;
     }
@@ -313,7 +370,7 @@ class MockScaleController extends EventEmitter {
       });
   }
 
-  _varyMockData() {
+  private _varyMockData(): void {
     // Add small random variations to simulate real scale behavior
     const variation = (Math.random() - 0.5) * 0.1; // ±0.05 lb variation
     this.mockState.grossWeight = Math.max(0, parseFloat((100.55 + variation).toFixed(2)));
@@ -326,11 +383,11 @@ class MockScaleController extends EventEmitter {
     }
   }
 
-  stopPolling() {
+  stopPolling(): void {
     this._stopPolling();
   }
 
-  _stopPolling() {
+  private _stopPolling(): void {
     if (!this.isPolling) {
       return;
     }
@@ -345,7 +402,7 @@ class MockScaleController extends EventEmitter {
     this.logger.info('Mock scale polling stopped');
   }
 
-  getStats() {
+  getStats(): ExtendedStats {
     const runtime = this.stats.startTime ? Date.now() - this.stats.startTime : 0;
     const packetLoss = this.stats.commandsSent > 0 ? 
       (this.stats.commandsSent - this.stats.responsesReceived) / this.stats.commandsSent : 0;
@@ -367,7 +424,7 @@ class MockScaleController extends EventEmitter {
     };
   }
 
-  isHealthy() {
+  isHealthy(): boolean {
     const stats = this.getStats();
     return this.isConnected && stats.packetLoss <= this.config.validation.maxPacketLoss;
   }

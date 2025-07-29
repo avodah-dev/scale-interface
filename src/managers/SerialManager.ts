@@ -1,35 +1,64 @@
 import { SerialPort } from 'serialport';
 import { EventEmitter } from 'events';
+import type { Config } from '../managers/ConfigManager';
+import type DataLogger from '../utils/DataLogger';
+
+interface SerialPortInfo {
+  path: string;
+  manufacturer?: string | undefined;
+  vendorId?: string | undefined;
+  productId?: string | undefined;
+}
+
+interface ConnectionInfo {
+  isConnected: boolean;
+  isConnecting: boolean;
+  reconnectAttempts: number;
+  maxReconnectAttempts: number;
+  lastActivity: number | null;
+  connectionStartTime: number | null;
+  path: string | null;
+}
 
 class SerialManager extends EventEmitter {
-  constructor(config, logger) {
+  private config: Config;
+  private logger: DataLogger;
+  private port: SerialPort | null = null;
+  private isConnected: boolean = false;
+  private isConnecting: boolean = false;
+  private reconnectTimer: NodeJS.Timeout | null = null;
+  private reconnectAttempts: number = 0;
+  private maxReconnectAttempts: number = 10;
+  private reconnectDelay: number = 1000; // Start with 1 second
+  private maxReconnectDelay: number = 30000; // Max 30 seconds
+  private connectionStartTime: number | null = null;
+  private lastActivity: number | null = null;
+
+  constructor(config: Config, logger: DataLogger) {
     super();
     this.config = config;
     this.logger = logger;
-    this.port = null;
-    this.isConnected = false;
-    this.isConnecting = false;
-    this.reconnectTimer = null;
-    this.reconnectAttempts = 0;
-    this.maxReconnectAttempts = 10;
-    this.reconnectDelay = 1000; // Start with 1 second
-    this.maxReconnectDelay = 30000; // Max 30 seconds
-    this.connectionStartTime = null;
-    this.lastActivity = null;
   }
 
-  async listPorts() {
+  async listPorts(): Promise<SerialPortInfo[]> {
     try {
       const ports = await SerialPort.list();
-      this.logger.debug('Available serial ports:', { ports: ports.map(p => ({ path: p.path, manufacturer: p.manufacturer, vendorId: p.vendorId, productId: p.productId })) });
+      this.logger.debug('Available serial ports:', { 
+        ports: ports.map(p => ({ 
+          path: p.path, 
+          manufacturer: p.manufacturer, 
+          vendorId: p.vendorId, 
+          productId: p.productId 
+        })) 
+      });
       return ports;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error('Failed to list serial ports:', { error: error.message });
       throw error;
     }
   }
 
-  async connect(portPath) {
+  async connect(portPath: string): Promise<void> {
     if (this.isConnecting) {
       throw new Error('Connection already in progress');
     }
@@ -52,8 +81,8 @@ class SerialManager extends EventEmitter {
       this.port = new SerialPort({
         path: portPath,
         baudRate: this.config.serial.baudRate,
-        dataBits: this.config.serial.dataBits,
-        stopBits: this.config.serial.stopBits,
+        dataBits: this.config.serial.dataBits as 5 | 6 | 7 | 8,
+        stopBits: this.config.serial.stopBits as 1 | 2,
         parity: this.config.serial.parity,
         autoOpen: false
       });
@@ -78,7 +107,7 @@ class SerialManager extends EventEmitter {
 
       this.emit('connected', { path: portPath, connectionTime });
 
-    } catch (error) {
+    } catch (error: any) {
       this.isConnecting = false;
       this.isConnected = false;
       
@@ -89,7 +118,7 @@ class SerialManager extends EventEmitter {
         connectionTime 
       });
 
-      if (this.port && !this.port.destroyed) {
+      if (this.port && !(this.port as any).destroyed) {
         this.port.destroy();
       }
       this.port = null;
@@ -99,13 +128,13 @@ class SerialManager extends EventEmitter {
     }
   }
 
-  _openWithTimeout() {
+  private _openWithTimeout(): Promise<void> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error(`Connection timeout after ${this.config.validation.connectionTimeout}ms`));
       }, this.config.validation.connectionTimeout);
 
-      this.port.open((error) => {
+      this.port!.open((error?: Error | null) => {
         clearTimeout(timeout);
         if (error) {
           reject(error);
@@ -116,12 +145,14 @@ class SerialManager extends EventEmitter {
     });
   }
 
-  _setupEventHandlers() {
+  private _setupEventHandlers(): void {
+    if (!this.port) return;
+
     this.port.on('open', () => {
       this.logger.debug('Serial port opened');
     });
 
-    this.port.on('data', (data) => {
+    this.port.on('data', (data: Buffer) => {
       this.lastActivity = Date.now();
       this.logger.debug('Received data from serial port', { 
         data: data.toString(),
@@ -130,7 +161,7 @@ class SerialManager extends EventEmitter {
       this.emit('data', data);
     });
 
-    this.port.on('error', (error) => {
+    this.port.on('error', (error: Error) => {
       this.logger.error('Serial port error', { error: error.message });
       this.emit('error', error);
       this._handleDisconnection();
@@ -143,9 +174,9 @@ class SerialManager extends EventEmitter {
     });
   }
 
-  _handleDisconnection() {
+  private _handleDisconnection(): void {
     this.isConnected = false;
-    if (this.port && !this.port.destroyed) {
+    if (this.port && !(this.port as any).destroyed) {
       this.port.destroy();
     }
     this.port = null;
@@ -161,7 +192,7 @@ class SerialManager extends EventEmitter {
     }
   }
 
-  _scheduleReconnect() {
+  private _scheduleReconnect(): void {
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
     }
@@ -183,7 +214,7 @@ class SerialManager extends EventEmitter {
     }, delay);
   }
 
-  async write(data) {
+  async write(data: string | Buffer): Promise<void> {
     if (!this.isConnected || !this.port) {
       throw new Error('Serial port not connected');
     }
@@ -193,12 +224,14 @@ class SerialManager extends EventEmitter {
         reject(new Error(`Write timeout after ${this.config.polling.timeout}ms`));
       }, this.config.polling.timeout);
 
+      const buffer = Buffer.isBuffer(data) ? data : Buffer.from(data);
+      
       this.logger.debug('Writing data to serial port', { 
-        data: data.toString(),
-        raw: Array.from(Buffer.from(data)).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' ')
+        data: buffer.toString(),
+        raw: Array.from(buffer).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' ')
       });
 
-      this.port.write(data, (error) => {
+      this.port!.write(buffer, (error?: Error | null) => {
         clearTimeout(timeout);
         if (error) {
           this.logger.error('Failed to write to serial port', { error: error.message });
@@ -211,13 +244,13 @@ class SerialManager extends EventEmitter {
     });
   }
 
-  async drain() {
+  async drain(): Promise<void> {
     if (!this.isConnected || !this.port) {
       throw new Error('Serial port not connected');
     }
 
     return new Promise((resolve, reject) => {
-      this.port.drain((error) => {
+      this.port!.drain((error?: Error | null) => {
         if (error) {
           reject(error);
         } else {
@@ -227,7 +260,7 @@ class SerialManager extends EventEmitter {
     });
   }
 
-  disconnect() {
+  disconnect(): void {
     this.logger.info('Manually disconnecting from serial port');
 
     // Clear reconnection timer
@@ -240,7 +273,7 @@ class SerialManager extends EventEmitter {
     this.reconnectAttempts = this.maxReconnectAttempts;
 
     if (this.port && this.isConnected) {
-      this.port.close((error) => {
+      this.port.close((error?: Error | null) => {
         if (error) {
           this.logger.error('Error closing serial port', { error: error.message });
         } else {
@@ -254,7 +287,7 @@ class SerialManager extends EventEmitter {
     this.port = null;
   }
 
-  getConnectionInfo() {
+  getConnectionInfo(): ConnectionInfo {
     return {
       isConnected: this.isConnected,
       isConnecting: this.isConnecting,
@@ -266,13 +299,13 @@ class SerialManager extends EventEmitter {
     };
   }
 
-  async flush() {
+  async flush(): Promise<void> {
     if (!this.isConnected || !this.port) {
       throw new Error('Serial port not connected');
     }
 
     return new Promise((resolve, reject) => {
-      this.port.flush((error) => {
+      this.port!.flush((error?: Error | null) => {
         if (error) {
           reject(error);
         } else {
@@ -283,7 +316,7 @@ class SerialManager extends EventEmitter {
   }
 
   // Check if connection is healthy based on activity
-  isConnectionHealthy() {
+  isConnectionHealthy(): boolean {
     if (!this.isConnected) {
       return false;
     }
@@ -291,7 +324,7 @@ class SerialManager extends EventEmitter {
     const now = Date.now();
     const maxIdleTime = this.config.polling.timeout * 3; // 3x polling timeout
     
-    return this.lastActivity && (now - this.lastActivity) < maxIdleTime;
+    return this.lastActivity !== null && (now - this.lastActivity) < maxIdleTime;
   }
 }
 

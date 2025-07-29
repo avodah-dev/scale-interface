@@ -1,27 +1,72 @@
 import winston from 'winston';
 import { existsSync, mkdirSync } from 'fs';
-import { resolve, dirname } from 'path';
+import { resolve } from 'path';
+import type { Config } from '../managers/ConfigManager';
 
 const { createLogger, format, transports } = winston;
 const { combine, timestamp, errors, json, printf, colorize } = format;
 
+interface LogEntry {
+  timestamp: string;
+  type: string;
+  [key: string]: any;
+}
+
+interface ScaleReading {
+  command?: string;
+  raw?: string;
+  parsed: any;
+  responseTime?: number;
+  connectionInfo?: any;
+  rawBytes?: string;
+}
+
+interface ConnectionInfo {
+  event: 'connected' | 'disconnected' | 'reconnecting';
+  [key: string]: any;
+}
+
+interface PerformanceMetrics {
+  avgResponseTime: number;
+  minResponseTime: number;
+  maxResponseTime: number;
+  totalReadings: number;
+  successRate: number;
+  errors: number;
+  uptime: number;
+}
+
+interface SessionInfo {
+  id: string;
+  mode: string;
+  config: any;
+  hardware: string;
+}
+
+interface Stats {
+  packetLoss: number;
+  [key: string]: any;
+}
+
 class DataLogger {
-  constructor(config) {
+  private config: Config;
+  private logger!: winston.Logger;
+  private scaleDataLogger!: winston.Logger;
+
+  constructor(config: Config) {
     this.config = config;
-    this.logger = null;
-    this.scaleDataLogger = null;
     this._ensureLogsDirectory();
     this._createLoggers();
   }
 
-  _ensureLogsDirectory() {
+  private _ensureLogsDirectory(): void {
     const logsDir = resolve('logs');
     if (!existsSync(logsDir)) {
       mkdirSync(logsDir, { recursive: true });
     }
   }
 
-  _createLoggers() {
+  private _createLoggers(): void {
     // Main application logger
     this.logger = createLogger({
       level: this.config.logging.level,
@@ -45,8 +90,8 @@ class DataLogger {
     });
   }
 
-  _createTransports(prefix) {
-    const transportArray = [];
+  private _createTransports(prefix: string): winston.transport[] {
+    const transportArray: winston.transport[] = [];
 
     // Console transport
     if (this.config.logging.format === 'json') {
@@ -90,7 +135,7 @@ class DataLogger {
     return transportArray;
   }
 
-  _createScaleDataTransports() {
+  private _createScaleDataTransports(): winston.transport[] {
     return [
       new transports.File({
         filename: resolve('logs', `scale-data-${this.config.logging.datePattern}.log`),
@@ -102,11 +147,11 @@ class DataLogger {
     ];
   }
 
-  _parseSize(sizeStr) {
+  private _parseSize(sizeStr: string): number {
     const match = sizeStr.match(/^(\d+)([kmg]?)$/i);
     if (!match) return 10 * 1024 * 1024; // Default 10MB
 
-    const size = parseInt(match[1]);
+    const size = parseInt(match[1]!);
     const unit = (match[2] || '').toLowerCase();
 
     switch (unit) {
@@ -118,30 +163,30 @@ class DataLogger {
   }
 
   // Application logging methods
-  error(message, meta = {}) {
+  error(message: string, meta: any = {}): void {
     this.logger.error(message, meta);
   }
 
-  warn(message, meta = {}) {
+  warn(message: string, meta: any = {}): void {
     this.logger.warn(message, meta);
   }
 
-  info(message, meta = {}) {
+  info(message: string, meta: any = {}): void {
     this.logger.info(message, meta);
   }
 
-  debug(message, meta = {}) {
+  debug(message: string, meta: any = {}): void {
     this.logger.debug(message, meta);
   }
 
   // Scale-specific logging
-  logScaleReading(reading) {
-    const logEntry = {
+  logScaleReading(reading: ScaleReading): void {
+    const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'scale_reading',
-      command: reading.command,
+      command: reading.command || '',
       response: {
-        raw: reading.raw,
+        raw: reading.raw || '',
         parsed: reading.parsed
       },
       responseTime: reading.responseTime || null,
@@ -156,25 +201,24 @@ class DataLogger {
     this.scaleDataLogger.info(logEntry);
   }
 
-  logScaleConnection(connectionInfo) {
-    const logEntry = {
+  logScaleConnection(connectionInfo: ConnectionInfo): void {
+    const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'scale_connection',
-      event: connectionInfo.event, // 'connected', 'disconnected', 'reconnecting'
       ...connectionInfo
     };
 
     this.scaleDataLogger.info(logEntry);
   }
 
-  logScaleError(error, context = {}) {
-    const logEntry = {
+  logScaleError(error: Error, context: any = {}): void {
+    const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'scale_error',
       error: {
         message: error.message,
         stack: error.stack,
-        code: error.code || null
+        code: (error as any).code || null
       },
       context
     };
@@ -183,8 +227,8 @@ class DataLogger {
     this.logger.error('Scale error logged', { error: error.message, context });
   }
 
-  logStats(stats) {
-    const logEntry = {
+  logStats(stats: Stats): void {
+    const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'scale_stats',
       stats: {
@@ -197,8 +241,8 @@ class DataLogger {
   }
 
   // Performance logging
-  logPerformanceMetrics(metrics) {
-    const logEntry = {
+  logPerformanceMetrics(metrics: PerformanceMetrics): void {
+    const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'performance_metrics',
       metrics: {
@@ -217,8 +261,8 @@ class DataLogger {
   }
 
   // Session logging
-  startSession(sessionInfo) {
-    const logEntry = {
+  startSession(sessionInfo: SessionInfo): void {
+    const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'session_start',
       session: {
@@ -233,8 +277,8 @@ class DataLogger {
     this.info('Session started', sessionInfo);
   }
 
-  endSession(sessionSummary) {
-    const logEntry = {
+  endSession(sessionSummary: any): void {
+    const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'session_end',
       summary: sessionSummary
@@ -245,13 +289,13 @@ class DataLogger {
   }
 
   // Test result logging
-  logTestResult(testName, result, details = {}) {
-    const logEntry = {
+  logTestResult(testName: string, result: 'pass' | 'fail' | 'warning', details: any = {}): void {
+    const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'test_result',
       test: {
         name: testName,
-        result: result, // 'pass', 'fail', 'warning'
+        result: result,
         details
       }
     };
@@ -268,8 +312,8 @@ class DataLogger {
   }
 
   // Configuration logging
-  logConfiguration(config) {
-    const logEntry = {
+  logConfiguration(config: Config): void {
+    const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'configuration',
       config: {
@@ -287,19 +331,21 @@ class DataLogger {
   }
 
   // Raw data logging (for debugging)
-  logRawData(direction, data) {
+  logRawData(direction: 'sent' | 'received', data: Buffer | string): void {
     if (!this.config.logging.includeRaw) {
       return;
     }
 
-    const logEntry = {
+    const buffer = Buffer.isBuffer(data) ? data : Buffer.from(data);
+    
+    const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'raw_data',
-      direction: direction, // 'sent', 'received'
+      direction: direction,
       data: {
-        string: data.toString(),
-        bytes: Array.from(data).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' '),
-        length: data.length
+        string: buffer.toString(),
+        bytes: Array.from(buffer).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' '),
+        length: buffer.length
       }
     };
 
@@ -307,16 +353,16 @@ class DataLogger {
   }
 
   // Get logger instance for direct use
-  getLogger() {
+  getLogger(): winston.Logger {
     return this.logger;
   }
 
-  getScaleDataLogger() {
+  getScaleDataLogger(): winston.Logger {
     return this.scaleDataLogger;
   }
 
   // Flush all logs
-  async flush() {
+  async flush(): Promise<void> {
     return new Promise((resolve) => {
       let pending = 2;
       const complete = () => {

@@ -6,21 +6,76 @@ import ConfigManager from './managers/ConfigManager.js';
 import ScaleController from './controllers/ScaleController.js';
 import MockScaleController from './controllers/MockScaleController.js';
 import DataLogger from './utils/DataLogger.js';
+import type { EventEmitter } from 'events';
+
+interface TestResult {
+  name: string;
+  result: 'pass' | 'fail' | 'warning';
+  details: string;
+}
+
+interface ControllerStats {
+  commandsSent: number;
+  responsesReceived: number;
+  errors: number;
+  timeouts: number;
+  packetLoss: number;
+  runtime: number;
+}
+
+interface ScaleReading {
+  command?: string;
+  raw?: string;
+  responseTime?: number;
+  parsed: {
+    type: string;
+    value: number | string;
+    unit?: string;
+    status: 'ok' | 'error';
+    error?: string;
+  };
+  connectionInfo?: any;
+  rawBytes?: string;
+}
+
+interface TestSummary {
+  runtime: number;
+  commandsSent: number;
+  responsesReceived: number;
+  errors: number;
+  timeouts: number;
+  successRate: number;
+  packetLoss: number;
+  totalReadings: number;
+  testResults: TestResult[];
+  performance?: {
+    avgResponseTime: number;
+    minResponseTime: number;
+    maxResponseTime: number;
+  };
+}
+
+interface ScaleControllerInterface extends EventEmitter {
+  connect(): Promise<void>;
+  disconnect(): void;
+  listAvailablePorts(): Promise<any[]>;
+  sendCommand(command: string): Promise<any>;
+  startPolling(command: string): void;
+  stopPolling(): void;
+  getStats(): ControllerStats;
+}
 
 class ScaleInterfaceApp {
-  constructor() {
-    this.configManager = null;
-    this.config = null;
-    this.logger = null;
-    this.scaleController = null;
-    this.sessionId = randomUUID();
-    this.startTime = Date.now();
-    this.readings = [];
-    this.isRunning = false;
-    this.testResults = [];
-  }
+  private configManager: ConfigManager | null = null;
+  private config: any = null;
+  private logger: DataLogger | null = null;
+  private scaleController: ScaleControllerInterface | null = null;
+  private sessionId: string = randomUUID();
+  private readings: ScaleReading[] = [];
+  private isRunning: boolean = false;
+  private testResults: TestResult[] = [];
 
-  async initialize(options = {}) {
+  async initialize(options: any = {}): Promise<boolean> {
     try {
       // Load configuration
       this.configManager = new ConfigManager();
@@ -70,7 +125,7 @@ class ScaleInterfaceApp {
       });
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to initialize application:', error.message);
       if (this.logger) {
         this.logger.error('Application initialization failed', { error: error.message });
@@ -79,25 +134,27 @@ class ScaleInterfaceApp {
     }
   }
 
-  _setupEventHandlers() {
-    this.scaleController.on('connected', (info) => {
-      this.logger.logScaleConnection({ event: 'connected', ...info });
+  private _setupEventHandlers(): void {
+    if (!this.scaleController) return;
+
+    this.scaleController.on('connected', (info: any) => {
+      this.logger?.logScaleConnection({ event: 'connected', ...info });
       console.log(`✅ Scale connected on ${info.path} (${info.connectionTime}ms)`);
     });
 
     this.scaleController.on('disconnected', () => {
-      this.logger.logScaleConnection({ event: 'disconnected' });
+      this.logger?.logScaleConnection({ event: 'disconnected' });
       console.log('❌ Scale disconnected');
     });
 
-    this.scaleController.on('reconnecting', (info) => {
-      this.logger.logScaleConnection({ event: 'reconnecting', ...info });
+    this.scaleController.on('reconnecting', (info: any) => {
+      this.logger?.logScaleConnection({ event: 'reconnecting', ...info });
       console.log(`🔄 Reconnecting... (attempt ${info.attempt}/${info.maxAttempts})`);
     });
 
-    this.scaleController.on('reading', (reading) => {
+    this.scaleController.on('reading', (reading: ScaleReading) => {
       this.readings.push(reading);
-      this.logger.logScaleReading(reading);
+      this.logger?.logScaleReading(reading);
       
       const value = reading.parsed.value;
       const unit = reading.parsed.unit || '';
@@ -110,12 +167,12 @@ class ScaleInterfaceApp {
       }
     });
 
-    this.scaleController.on('error', (error) => {
-      this.logger.logScaleError(error);
+    this.scaleController.on('error', (error: any) => {
+      this.logger?.logScaleError(error);
       console.error(`❌ Scale error: ${error.message}`);
     });
 
-    this.scaleController.on('pollingError', (error) => {
+    this.scaleController.on('pollingError', (error: any) => {
       console.error(`⚠️  Polling error: ${error.message}`);
     });
 
@@ -131,9 +188,14 @@ class ScaleInterfaceApp {
     });
   }
 
-  async runDiagnostics() {
+  async runDiagnostics(): Promise<boolean> {
     console.log('\n🔍 Running Scale Interface Diagnostics\n');
     
+    if (!this.scaleController) {
+      console.error('❌ Scale controller not initialized');
+      return false;
+    }
+
     try {
       // Test 1: List available ports
       console.log('1. Listing available serial ports...');
@@ -162,11 +224,11 @@ class ScaleInterfaceApp {
 
       // Test 2: Connection test
       console.log('\n2. Testing scale connection...');
-      const connectionStart = Date.now();
+      const _connectionStart = Date.now();
       
       try {
         await this.scaleController.connect();
-        const connectionTime = Date.now() - connectionStart;
+        const connectionTime = Date.now() - _connectionStart;
         
         if (connectionTime <= this.config.validation.connectionTimeout) {
           this.testResults.push({ name: 'Connection', result: 'pass', details: `Connected in ${connectionTime}ms` });
@@ -175,7 +237,7 @@ class ScaleInterfaceApp {
           this.testResults.push({ name: 'Connection', result: 'warning', details: `Slow connection: ${connectionTime}ms` });
           console.log(`   ⚠️  Connected but slow: ${connectionTime}ms`);
         }
-      } catch (error) {
+      } catch (error: any) {
         this.testResults.push({ name: 'Connection', result: 'fail', details: error.message });
         console.log(`   ❌ Connection failed: ${error.message}`);
         return false;
@@ -196,22 +258,26 @@ class ScaleInterfaceApp {
             this.testResults.push({ name: `Command ${command}`, result: 'warning', details: response.parsed.error });
             console.log(`   ⚠️  ${command}: ${response.parsed.error}`);
           }
-        } catch (error) {
+        } catch (error: any) {
           this.testResults.push({ name: `Command ${command}`, result: 'fail', details: error.message });
           console.log(`   ❌ ${command}: ${error.message}`);
         }
       }
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error(`❌ Diagnostics failed: ${error.message}`);
       return false;
     }
   }
 
-  async runPollingTest(duration = 60000) {
+  async runPollingTest(duration: number = 60000): Promise<TestSummary> {
     console.log(`\n📊 Starting ${duration/1000}s polling test...\n`);
     
+    if (!this.scaleController) {
+      throw new Error('Scale controller not initialized');
+    }
+
     this.scaleController.startPolling('grossWeight');
     this.isRunning = true;
 
@@ -224,13 +290,13 @@ class ScaleInterfaceApp {
     return new Promise((resolve) => {
       const statusInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
-        const stats = this.scaleController.getStats();
+        const stats = this.scaleController!.getStats();
         
         console.log(`⏱️  ${Math.floor(elapsed/1000)}s | Readings: ${stats.responsesReceived} | Errors: ${stats.errors} | Packet Loss: ${(stats.packetLoss * 100).toFixed(1)}%`);
         
         if (elapsed >= duration) {
           clearInterval(statusInterval);
-          this.scaleController.stopPolling();
+          this.scaleController!.stopPolling();
           this.isRunning = false;
           resolve(this._generateTestSummary());
         }
@@ -238,8 +304,16 @@ class ScaleInterfaceApp {
     });
   }
 
-  _generateTestSummary() {
-    const stats = this.scaleController.getStats();
+  private _generateTestSummary(): TestSummary {
+    const stats = this.scaleController?.getStats() || {
+      runtime: 0,
+      commandsSent: 0,
+      responsesReceived: 0,
+      errors: 0,
+      timeouts: 0,
+      packetLoss: 0
+    };
+    
     const runtime = stats.runtime;
     const successRate = stats.commandsSent > 0 ? (stats.responsesReceived / stats.commandsSent) * 100 : 0;
     
@@ -252,7 +326,7 @@ class ScaleInterfaceApp {
     console.log(`├─ Success rate: ${successRate.toFixed(1)}%`);
     console.log(`└─ Packet loss: ${(stats.packetLoss * 100).toFixed(1)}%`);
 
-    const summary = {
+    const summary: TestSummary = {
       runtime,
       commandsSent: stats.commandsSent,
       responsesReceived: stats.responsesReceived,
@@ -268,7 +342,7 @@ class ScaleInterfaceApp {
     if (this.readings.length > 0) {
       const responseTimes = this.readings
         .filter(r => r.responseTime)
-        .map(r => r.responseTime);
+        .map(r => r.responseTime!);
       
       if (responseTimes.length > 0) {
         const avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
@@ -281,7 +355,7 @@ class ScaleInterfaceApp {
           maxResponseTime
         };
 
-        this.logger.logPerformanceMetrics({
+        this.logger?.logPerformanceMetrics({
           ...summary.performance,
           totalReadings: this.readings.length,
           successRate: summary.successRate,
@@ -291,12 +365,12 @@ class ScaleInterfaceApp {
       }
     }
 
-    this.logger.logStats(stats);
+    this.logger?.logStats(stats);
     
     return summary;
   }
 
-  async shutdown() {
+  async shutdown(): Promise<void> {
     if (!this.isRunning) {
       process.exit(0);
       return;
@@ -317,7 +391,7 @@ class ScaleInterfaceApp {
         
         // Log all test results
         this.testResults.forEach(test => {
-          this.logger.logTestResult(test.name, test.result, test.details);
+          this.logger!.logTestResult(test.name, test.result, test.details);
         });
         
         await this.logger.flush();
@@ -325,7 +399,7 @@ class ScaleInterfaceApp {
 
       console.log('\n✅ Application shutdown complete');
       process.exit(0);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error during shutdown:', error.message);
       process.exit(1);
     }
