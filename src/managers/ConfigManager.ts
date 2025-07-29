@@ -1,5 +1,5 @@
-import Joi from 'joi';
 import { readFileSync } from 'fs';
+import Joi from 'joi';
 import { resolve } from 'path';
 
 interface SerialConfig {
@@ -84,7 +84,7 @@ class ConfigManager {
         parity: Joi.string().valid('none', 'odd', 'even').required(),
         timeout: Joi.number().min(1000).max(30000).required(),
         autoOpen: Joi.boolean().required(),
-        path: Joi.string().allow(null)
+        path: Joi.string().allow(null),
       }).required(),
 
       commands: Joi.object({
@@ -95,7 +95,7 @@ class ConfigManager {
         zero: Joi.string().required(),
         tare: Joi.string().required(),
         print: Joi.string().required(),
-        version: Joi.string().required()
+        version: Joi.string().required(),
       }).required(),
 
       polling: Joi.object({
@@ -103,7 +103,7 @@ class ConfigManager {
         timeout: Joi.number().min(1000).max(30000).required(),
         retries: Joi.number().min(1).max(10).required(),
         minInterval: Joi.number().min(100).required(),
-        maxInterval: Joi.number().min(1000).required()
+        maxInterval: Joi.number().min(1000).required(),
       }).required(),
 
       logging: Joi.object({
@@ -112,7 +112,7 @@ class ConfigManager {
         includeRaw: Joi.boolean().required(),
         maxFiles: Joi.number().min(1).max(100).required(),
         maxSize: Joi.string().required(),
-        datePattern: Joi.string().required()
+        datePattern: Joi.string().required(),
       }).required(),
 
       mode: Joi.string().valid('setup-testing', 'hardware-testing', 'scale', 'testing').required(),
@@ -122,15 +122,15 @@ class ConfigManager {
         errorResponses: Joi.object().pattern(Joi.string(), Joi.string()).required(),
         simulateErrors: Joi.boolean().required(),
         errorRate: Joi.number().min(0).max(1).required(),
-        responseDelay: Joi.number().min(0).max(5000).required()
+        responseDelay: Joi.number().min(0).max(5000).required(),
       }).required(),
 
       validation: Joi.object({
         connectionTimeout: Joi.number().min(1000).max(60000).required(),
         responseTimeout: Joi.number().min(500).max(10000).required(),
         maxPacketLoss: Joi.number().min(0).max(1).required(),
-        minReadings: Joi.number().min(1).max(10000).required()
-      }).required()
+        minReadings: Joi.number().min(1).max(10000).required(),
+      }).required(),
     });
   }
 
@@ -138,10 +138,10 @@ class ConfigManager {
     try {
       const configData = readFileSync(this.configPath, 'utf8');
       const parsedConfig = JSON.parse(configData);
-      
-      const { error, value } = this.schema.validate(parsedConfig, { 
+
+      const { error, value } = this.schema.validate(parsedConfig, {
         abortEarly: false,
-        allowUnknown: false 
+        allowUnknown: false,
       });
 
       if (error) {
@@ -170,9 +170,13 @@ class ConfigManager {
     if (!this.config) return;
 
     // Ensure polling interval is within allowed range
-    if (this.config.polling.interval < this.config.polling.minInterval ||
-        this.config.polling.interval > this.config.polling.maxInterval) {
-      throw new Error(`Polling interval must be between ${this.config.polling.minInterval} and ${this.config.polling.maxInterval} ms`);
+    if (
+      this.config.polling.interval < this.config.polling.minInterval ||
+      this.config.polling.interval > this.config.polling.maxInterval
+    ) {
+      throw new Error(
+        `Polling interval must be between ${this.config.polling.minInterval} and ${this.config.polling.maxInterval} ms`
+      );
     }
 
     // Ensure response timeout is less than polling timeout
@@ -185,7 +189,8 @@ class ConfigManager {
       if (!command.endsWith('\r')) {
         throw new Error(`Command '${name}' must end with carriage return (\\r)`);
       }
-      if (command.length !== 4) { // 3 letters + \r
+      if (command.length !== 4) {
+        // 3 letters + \r
         throw new Error(`Command '${name}' must be exactly 3 letters followed by \\r`);
       }
     }

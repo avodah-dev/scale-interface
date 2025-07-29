@@ -1,6 +1,6 @@
-import winston from 'winston';
 import { existsSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
+import winston from 'winston';
 import type { Config } from '../managers/ConfigManager';
 
 const { createLogger, format, transports } = winston;
@@ -70,23 +70,17 @@ class DataLogger {
     // Main application logger
     this.logger = createLogger({
       level: this.config.logging.level,
-      format: combine(
-        errors({ stack: true }),
-        timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' })
-      ),
+      format: combine(errors({ stack: true }), timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' })),
       transports: this._createTransports('application'),
-      exitOnError: false
+      exitOnError: false,
     });
 
     // Separate logger for scale data
     this.scaleDataLogger = createLogger({
       level: 'info',
-      format: combine(
-        timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
-        json()
-      ),
+      format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }), json()),
       transports: this._createScaleDataTransports(),
-      exitOnError: false
+      exitOnError: false,
     });
   }
 
@@ -95,42 +89,47 @@ class DataLogger {
 
     // Console transport
     if (this.config.logging.format === 'json') {
-      transportArray.push(new transports.Console({
-        format: combine(
-          colorize({ all: true }),
-          json()
-        )
-      }));
+      transportArray.push(
+        new transports.Console({
+          format: combine(colorize({ all: true }), json()),
+        })
+      );
     } else {
-      transportArray.push(new transports.Console({
-        format: combine(
-          colorize({ all: true }),
-          printf(({ timestamp, level, message, ...meta }) => {
-            const metaStr = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : '';
-            return `${timestamp} [${level}]: ${message}${metaStr}`;
-          })
-        )
-      }));
+      transportArray.push(
+        new transports.Console({
+          format: combine(
+            colorize({ all: true }),
+            printf(({ timestamp, level, message, ...meta }) => {
+              const metaStr = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : '';
+              return `${timestamp} [${level}]: ${message}${metaStr}`;
+            })
+          ),
+        })
+      );
     }
 
     // File transport for all logs
-    transportArray.push(new transports.File({
-      filename: resolve('logs', `${prefix}-${this.config.logging.datePattern}.log`),
-      format: json(),
-      maxsize: this._parseSize(this.config.logging.maxSize),
-      maxFiles: this.config.logging.maxFiles,
-      tailable: true
-    }));
+    transportArray.push(
+      new transports.File({
+        filename: resolve('logs', `${prefix}-${this.config.logging.datePattern}.log`),
+        format: json(),
+        maxsize: this._parseSize(this.config.logging.maxSize),
+        maxFiles: this.config.logging.maxFiles,
+        tailable: true,
+      })
+    );
 
     // Error-only file transport
-    transportArray.push(new transports.File({
-      filename: resolve('logs', `${prefix}-error-${this.config.logging.datePattern}.log`),
-      level: 'error',
-      format: json(),
-      maxsize: this._parseSize(this.config.logging.maxSize),
-      maxFiles: this.config.logging.maxFiles,
-      tailable: true
-    }));
+    transportArray.push(
+      new transports.File({
+        filename: resolve('logs', `${prefix}-error-${this.config.logging.datePattern}.log`),
+        level: 'error',
+        format: json(),
+        maxsize: this._parseSize(this.config.logging.maxSize),
+        maxFiles: this.config.logging.maxFiles,
+        tailable: true,
+      })
+    );
 
     return transportArray;
   }
@@ -142,8 +141,8 @@ class DataLogger {
         format: json(),
         maxsize: this._parseSize(this.config.logging.maxSize),
         maxFiles: this.config.logging.maxFiles,
-        tailable: true
-      })
+        tailable: true,
+      }),
     ];
   }
 
@@ -155,10 +154,14 @@ class DataLogger {
     const unit = (match[2] || '').toLowerCase();
 
     switch (unit) {
-      case 'k': return size * 1024;
-      case 'm': return size * 1024 * 1024;
-      case 'g': return size * 1024 * 1024 * 1024;
-      default: return size;
+      case 'k':
+        return size * 1024;
+      case 'm':
+        return size * 1024 * 1024;
+      case 'g':
+        return size * 1024 * 1024 * 1024;
+      default:
+        return size;
     }
   }
 
@@ -187,10 +190,10 @@ class DataLogger {
       command: reading.command || '',
       response: {
         raw: reading.raw || '',
-        parsed: reading.parsed
+        parsed: reading.parsed,
       },
       responseTime: reading.responseTime || null,
-      connectionInfo: reading.connectionInfo || null
+      connectionInfo: reading.connectionInfo || null,
     };
 
     // Include raw data if configured
@@ -205,7 +208,7 @@ class DataLogger {
     const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'scale_connection',
-      ...connectionInfo
+      ...connectionInfo,
     };
 
     this.scaleDataLogger.info(logEntry);
@@ -218,9 +221,9 @@ class DataLogger {
       error: {
         message: error.message,
         stack: error.stack,
-        code: (error as any).code || null
+        code: (error as any).code || null,
       },
-      context
+      context,
     };
 
     this.scaleDataLogger.error(logEntry);
@@ -233,8 +236,8 @@ class DataLogger {
       type: 'scale_stats',
       stats: {
         ...stats,
-        packetLossPercentage: (stats.packetLoss * 100).toFixed(2)
-      }
+        packetLossPercentage: (stats.packetLoss * 100).toFixed(2),
+      },
     };
 
     this.scaleDataLogger.info(logEntry);
@@ -252,8 +255,8 @@ class DataLogger {
         totalReadings: metrics.totalReadings,
         successRate: metrics.successRate,
         errors: metrics.errors,
-        uptime: metrics.uptime
-      }
+        uptime: metrics.uptime,
+      },
     };
 
     this.scaleDataLogger.info(logEntry);
@@ -269,8 +272,8 @@ class DataLogger {
         id: sessionInfo.id,
         mode: sessionInfo.mode,
         config: sessionInfo.config,
-        hardware: sessionInfo.hardware
-      }
+        hardware: sessionInfo.hardware,
+      },
     };
 
     this.scaleDataLogger.info(logEntry);
@@ -281,7 +284,7 @@ class DataLogger {
     const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'session_end',
-      summary: sessionSummary
+      summary: sessionSummary,
     };
 
     this.scaleDataLogger.info(logEntry);
@@ -296,12 +299,12 @@ class DataLogger {
       test: {
         name: testName,
         result: result,
-        details
-      }
+        details,
+      },
     };
 
     this.scaleDataLogger.info(logEntry);
-    
+
     if (result === 'pass') {
       this.info(`Test passed: ${testName}`, details);
     } else if (result === 'fail') {
@@ -321,9 +324,9 @@ class DataLogger {
         // Remove sensitive data if any
         serial: {
           ...config.serial,
-          path: config.serial.path ? '[REDACTED]' : null
-        }
-      }
+          path: config.serial.path ? '[REDACTED]' : null,
+        },
+      },
     };
 
     this.scaleDataLogger.info(logEntry);
@@ -337,16 +340,18 @@ class DataLogger {
     }
 
     const buffer = Buffer.isBuffer(data) ? data : Buffer.from(data);
-    
+
     const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
       type: 'raw_data',
       direction: direction,
       data: {
         string: buffer.toString(),
-        bytes: Array.from(buffer).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' '),
-        length: buffer.length
-      }
+        bytes: Array.from(buffer)
+          .map(b => `0x${b.toString(16).padStart(2, '0')}`)
+          .join(' '),
+        length: buffer.length,
+      },
     };
 
     this.scaleDataLogger.debug(logEntry);
@@ -363,7 +368,7 @@ class DataLogger {
 
   // Flush all logs
   async flush(): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       let pending = 2;
       const complete = () => {
         pending--;

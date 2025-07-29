@@ -1,5 +1,5 @@
-import { SerialPort } from 'serialport';
 import { EventEmitter } from 'events';
+import { SerialPort } from 'serialport';
 import type { Config } from '../managers/ConfigManager';
 import type DataLogger from '../utils/DataLogger';
 
@@ -43,13 +43,13 @@ class SerialManager extends EventEmitter {
   async listPorts(): Promise<SerialPortInfo[]> {
     try {
       const ports = await SerialPort.list();
-      this.logger.debug('Available serial ports:', { 
-        ports: ports.map(p => ({ 
-          path: p.path, 
-          manufacturer: p.manufacturer, 
-          vendorId: p.vendorId, 
-          productId: p.productId 
-        })) 
+      this.logger.debug('Available serial ports:', {
+        ports: ports.map(p => ({
+          path: p.path,
+          manufacturer: p.manufacturer,
+          vendorId: p.vendorId,
+          productId: p.productId,
+        })),
       });
       return ports;
     } catch (error: any) {
@@ -72,9 +72,9 @@ class SerialManager extends EventEmitter {
     this.connectionStartTime = Date.now();
 
     try {
-      this.logger.info('Attempting to connect to serial port', { 
+      this.logger.info('Attempting to connect to serial port', {
         path: portPath,
-        config: this.config.serial 
+        config: this.config.serial,
       });
 
       // Create SerialPort instance
@@ -84,7 +84,7 @@ class SerialManager extends EventEmitter {
         dataBits: this.config.serial.dataBits as 5 | 6 | 7 | 8,
         stopBits: this.config.serial.stopBits as 1 | 2,
         parity: this.config.serial.parity,
-        autoOpen: false
+        autoOpen: false,
       });
 
       // Set up event handlers
@@ -100,22 +100,21 @@ class SerialManager extends EventEmitter {
       this.lastActivity = Date.now();
 
       const connectionTime = Date.now() - this.connectionStartTime;
-      this.logger.info('Successfully connected to serial port', { 
-        path: portPath, 
-        connectionTime 
+      this.logger.info('Successfully connected to serial port', {
+        path: portPath,
+        connectionTime,
       });
 
       this.emit('connected', { path: portPath, connectionTime });
-
     } catch (error: any) {
       this.isConnecting = false;
       this.isConnected = false;
-      
+
       const connectionTime = Date.now() - this.connectionStartTime;
-      this.logger.error('Failed to connect to serial port', { 
-        path: portPath, 
-        error: error.message, 
-        connectionTime 
+      this.logger.error('Failed to connect to serial port', {
+        path: portPath,
+        error: error.message,
+        connectionTime,
       });
 
       if (this.port && !(this.port as any).destroyed) {
@@ -154,9 +153,11 @@ class SerialManager extends EventEmitter {
 
     this.port.on('data', (data: Buffer) => {
       this.lastActivity = Date.now();
-      this.logger.debug('Received data from serial port', { 
+      this.logger.debug('Received data from serial port', {
         data: data.toString(),
-        raw: Array.from(data).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' ')
+        raw: Array.from(data)
+          .map(b => `0x${b.toString(16).padStart(2, '0')}`)
+          .join(' '),
       });
       this.emit('data', data);
     });
@@ -185,8 +186,8 @@ class SerialManager extends EventEmitter {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this._scheduleReconnect();
     } else {
-      this.logger.error('Max reconnection attempts reached', { 
-        attempts: this.maxReconnectAttempts 
+      this.logger.error('Max reconnection attempts reached', {
+        attempts: this.maxReconnectAttempts,
       });
       this.emit('maxReconnectAttemptsReached');
     }
@@ -198,18 +199,21 @@ class SerialManager extends EventEmitter {
     }
 
     this.reconnectAttempts++;
-    const delay = Math.min(this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1), this.maxReconnectDelay);
+    const delay = Math.min(
+      this.reconnectDelay * 2 ** (this.reconnectAttempts - 1),
+      this.maxReconnectDelay
+    );
 
-    this.logger.info('Scheduling reconnection attempt', { 
+    this.logger.info('Scheduling reconnection attempt', {
       attempt: this.reconnectAttempts,
       delay,
-      maxAttempts: this.maxReconnectAttempts
+      maxAttempts: this.maxReconnectAttempts,
     });
 
     this.reconnectTimer = setTimeout(() => {
-      this.emit('reconnecting', { 
+      this.emit('reconnecting', {
         attempt: this.reconnectAttempts,
-        maxAttempts: this.maxReconnectAttempts
+        maxAttempts: this.maxReconnectAttempts,
       });
     }, delay);
   }
@@ -225,10 +229,12 @@ class SerialManager extends EventEmitter {
       }, this.config.polling.timeout);
 
       const buffer = Buffer.isBuffer(data) ? data : Buffer.from(data);
-      
-      this.logger.debug('Writing data to serial port', { 
+
+      this.logger.debug('Writing data to serial port', {
         data: buffer.toString(),
-        raw: Array.from(buffer).map(b => `0x${b.toString(16).padStart(2, '0')}`).join(' ')
+        raw: Array.from(buffer)
+          .map(b => `0x${b.toString(16).padStart(2, '0')}`)
+          .join(' '),
       });
 
       this.port!.write(buffer, (error?: Error | null) => {
@@ -295,7 +301,7 @@ class SerialManager extends EventEmitter {
       maxReconnectAttempts: this.maxReconnectAttempts,
       lastActivity: this.lastActivity,
       connectionStartTime: this.connectionStartTime,
-      path: this.port?.path || null
+      path: this.port?.path || null,
     };
   }
 
@@ -323,8 +329,8 @@ class SerialManager extends EventEmitter {
 
     const now = Date.now();
     const maxIdleTime = this.config.polling.timeout * 3; // 3x polling timeout
-    
-    return this.lastActivity !== null && (now - this.lastActivity) < maxIdleTime;
+
+    return this.lastActivity !== null && now - this.lastActivity < maxIdleTime;
   }
 }
 

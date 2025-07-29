@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Important Development Guidelines
+
+**ALWAYS run `pnpm run check` after making any code changes** to ensure:
+- Code passes all linting rules
+- Formatting is consistent with project standards
+- No TypeScript errors are introduced
+
+If `pnpm run check` fails, run `pnpm run check:fix` to auto-fix issues, then verify the changes.
+
 ## Project Documentation Structure
 
 - **project-overview.md** - Complete system requirements, architecture, and end-to-end specifications for the 13-station scale interface system
@@ -24,43 +33,52 @@ This is a scale-based workstation system project for industrial manufacturing en
 
 ### Phase 1a: Console-Based Testing - Mock Scale (✅ COMPLETED)
 **Status**: All success criteria met and validated with mock scale simulation
-**Runtime**: Bun 1.2 with full npm compatibility
+**Runtime**: Node.js with TSX for TypeScript execution
 **Ready for**: Phase 1b hardware testing with office equipment
 
-Built a comprehensive Node.js/Bun console application with:
+Built a comprehensive TypeScript console application with:
 
-```javascript
-// Configuration structure - load from config.json
-const defaultConfig = {
+```typescript
+// TypeScript configuration with full type safety
+interface Config {
   serial: {
-    baudRate: 9600,
-    dataBits: 8,
-    stopBits: 1,
-    parity: 'none',
-    timeout: 5000
-  },
+    baudRate: number;
+    dataBits: number;
+    stopBits: number;
+    parity: 'none' | 'odd' | 'even';
+    timeout: number;
+    autoOpen: boolean;
+    path: string | null;
+  };
   commands: {
-    grossWeight: 'SGW\r',    // Send gross weight
-    netWeight: 'SNW\r',     // Send net weight
-    count: 'SCO\r',         // Send count (counting mode)
-    pieceWeight: 'SPW\r',   // Send piece weight
-    zero: 'ZRO\r',          // Zero the scale
-    tare: 'ATW\r',          // Acquire tare weight
-    print: 'SRP\r',         // Send formatted data output
-    version: 'SVN\r'        // Send firmware version
-  },
+    grossWeight: string;    // 'SGW\r'
+    netWeight: string;      // 'SNW\r'
+    count: string;          // 'SCO\r'
+    pieceWeight: string;    // 'SPW\r'
+    zero: string;           // 'ZRO\r'
+    tare: string;           // 'ATW\r'
+    print: string;          // 'SRP\r'
+    version: string;        // 'SVN\r'
+  };
   polling: {
-    interval: 1000,     // 1 second, configurable
-    timeout: 5000,      // Response timeout
-    retries: 3          // Failed command retries
-  },
+    interval: number;       // Default: 1000ms
+    timeout: number;        // Default: 5000ms
+    retries: number;        // Default: 3
+    minInterval: number;
+    maxInterval: number;
+  };
   logging: {
-    level: 'debug',
-    format: 'json',
-    includeRaw: true
-  },
-  mode: 'testing'       // 'testing' or 'scale'
-};
+    level: 'error' | 'warn' | 'info' | 'debug';
+    format: 'json' | 'simple';
+    includeRaw: boolean;
+    maxFiles: number;
+    maxSize: string;
+    datePattern: string;
+  };
+  mode: 'setup-testing' | 'hardware-testing' | 'scale' | 'testing';
+  testing: TestingConfig;
+  validation: ValidationConfig;
+}
 ```
 
 ### Phase 1b: Console-Based Testing - Real Hardware (⭐ NEXT PHASE)
@@ -138,18 +156,31 @@ Develop complete Electron-based touchscreen applications with:
 - **Error Handling**: Scale error codes (`Err.80`, `Err.81`), status conditions (`ULULUL`, `OLOLOL`, `-------`), timeout, connection loss, retry logic
 - **Data Validation**: Bounds checking, format validation, completeness checks
 
-### Tech Stack
-- **Electron**: Cross-platform application framework
-- **Node.js**: Serial communication and API calls
-- **Libraries**:
-  - **node-serialport**: USB serial communication
-  - **Local Storage**: SQLite recommended with WAL mode for offline resilience
+### Current Tech Stack (Phase 1 Console App)
+- **Runtime**: Node.js with TSX for direct TypeScript execution
+- **Language**: TypeScript with strict type checking
+- **Core Libraries**:
+  - **serialport**: USB serial communication with TypeScript support
+  - **commander**: CLI argument parsing
+  - **winston**: Structured logging with JSON output
+  - **joi**: Configuration validation
+- **Development Tools**:
+  - **tsx**: Zero-config TypeScript execution
+  - **@biomejs/biome**: Fast, unified linting and formatting
+  - **typescript**: Type checking and language features
+- **Code Quality**:
+  - Full TypeScript with strict mode
+  - Biome for consistent formatting and linting
+  - Comprehensive type definitions for all interfaces
+
+### Future Tech Stack (Phase 3 Full System)
+- **Electron**: Cross-platform desktop application
+- **Frontend**: React with TypeScript
+- **Local Storage**: SQLite with WAL mode for offline resilience
+- **Additional Libraries**:
   - **axios**: HTTP client with retry/timeout
-  - **electron-store**: Configuration management
-  - **winston**: Structured logging
-  - **joi**: Data validation schemas
-- **Development**: electron-builder, jest, eslint, nodemon
-- **Frontend**: React (recommended for component reusability)
+  - **electron-store**: Persistent configuration
+  - **electron-builder**: Application packaging
 
 ## Development Tools Available
 
@@ -167,11 +198,14 @@ For full system deployment, additional tools will be needed:
 - Additional hardware for 13-station deployment
 
 ### Development Approach
-1. **Console Testing**: Build Node.js app for scale communication validation
-2. **Data Format Capture**: Log all serial communication for protocol analysis
-3. **Electron Development**: Build touchscreen-optimized UI
-4. **Cross-Platform Testing**: Validate on Windows/Linux targets
-5. **Cloud Integration**: Implement API calls with offline buffering
+1. **Console Testing**: TypeScript console app with TSX for scale validation
+2. **Type Safety**: Full TypeScript with strict checking and comprehensive interfaces
+3. **Code Quality**: Biome for consistent formatting and linting standards
+   - Run `pnpm run check` after EVERY code change
+   - Use `pnpm run check:fix` to auto-fix issues
+   - Ensure all code passes before committing
+4. **Data Format Capture**: Structured logging with typed events
+5. **Future Electron Development**: Reuse TypeScript modules for UI application
 
 ## Key Success Criteria
 
@@ -185,9 +219,11 @@ For full system deployment, additional tools will be needed:
 - ✅ **Performance**: Maintain <5% packet loss during extended test (achieved: 0.9% with mock)
 
 **Phase 1a Validation Commands**: 
-- `bun start --mode=testing --diagnostics` (quick mock test)
-- `bun run validate-success-criteria.js` (comprehensive mock validation)
-- `bun start --mode=testing --time=60` (extended mock polling test)
+- `pnpm start --mode=testing --diagnostics` (quick mock test)
+- `node testing-archive/validate-success-criteria.js` (comprehensive mock validation)
+- `pnpm start --mode=testing --time=60` (extended mock polling test)
+- `pnpm run typecheck` (TypeScript validation)
+- `pnpm run check` (Biome linting and formatting)
 
 ### Phase 1b Hardware Testing (🎯 CURRENT FOCUS)
 - Connect to actual RS-232 hardware within 5 minutes
@@ -200,11 +236,16 @@ For full system deployment, additional tools will be needed:
 **Phase 1b Commands for Hardware Testing**:
 ```bash
 # Test with real hardware (FTDI adapter required)
-bun start --mode=scale --diagnostics
-bun start --mode=scale --time=300
+pnpm start --mode=scale --diagnostics
+pnpm start --mode=scale --time=300
 
 # Compare real vs mock data
 grep "scale_reading" logs/scale-data-*.log | tail -20
+
+# Code quality checks
+pnpm run typecheck
+pnpm run lint
+pnpm run format
 ```
 
 ### Phase 2 Sterling 7600 Validation
@@ -235,14 +276,15 @@ grep "scale_reading" logs/scale-data-*.log | tail -20
 ## Project Status
 
 ### ✅ Phase 1a - Console Testing with Mock Scale COMPLETED:
-- ✅ **Complete Bun 1.2 console application** - All success criteria validated with mock scale
-- ✅ **Sterling 7600 protocol implementation** - Full command set and error handling (simulated)
-- ✅ **Mock testing framework** - Hardware-independent development and validation
-- ✅ **Configuration management** - JSON-based with full validation
-- ✅ **Structured logging** - Comprehensive data capture and analysis
+- ✅ **TypeScript Console Application** - Full TypeScript with TSX wrapper for Node.js, all criteria validated
+- ✅ **Sterling 7600 protocol implementation** - Typed command/response interfaces with full error handling
+- ✅ **Mock testing framework** - Type-safe mock controller matching real controller interface
+- ✅ **Configuration management** - JSON-based with Joi validation and TypeScript types
+- ✅ **Structured logging** - Winston with typed log entries and comprehensive data capture
+- ✅ **Code Quality** - Biome linting/formatting, strict TypeScript checking
 - ✅ **Performance validation** - Sub-second response times, <1% packet loss (simulated)
 
-**Ready for Phase 1b**: Console application tested and validated with mock, ready for real hardware testing
+**Tech Stack**: TypeScript, TSX, Biome, Winston, Joi, Commander, SerialPort
 
 ### 🎯 Phase 1b - Hardware Testing with Office Equipment (CURRENT FOCUS):
 - ✅ **Console application completed** - Validated with comprehensive mock testing

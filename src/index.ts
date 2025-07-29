@@ -2,11 +2,11 @@
 
 import { program } from 'commander';
 import { randomUUID } from 'crypto';
-import ConfigManager from './managers/ConfigManager.js';
-import ScaleController from './controllers/ScaleController.js';
-import MockScaleController from './controllers/MockScaleController.js';
-import DataLogger from './utils/DataLogger.js';
 import type { EventEmitter } from 'events';
+import MockScaleController from './controllers/MockScaleController.js';
+import ScaleController from './controllers/ScaleController.js';
+import ConfigManager from './managers/ConfigManager.js';
+import DataLogger from './utils/DataLogger.js';
 
 interface TestResult {
   name: string;
@@ -80,7 +80,7 @@ class ScaleInterfaceApp {
       // Load configuration
       this.configManager = new ConfigManager();
       this.config = this.configManager.load();
-      
+
       // Override mode if specified in options
       if (options.mode) {
         this.config.mode = options.mode;
@@ -109,7 +109,9 @@ class ScaleInterfaceApp {
           this.logger.info('Initialized in testing mode (mock scale)');
           break;
         default:
-          throw new Error(`Invalid mode: ${this.config.mode}. Use: setup-testing, hardware-testing, or scale`);
+          throw new Error(
+            `Invalid mode: ${this.config.mode}. Use: setup-testing, hardware-testing, or scale`
+          );
       }
 
       this._setupEventHandlers();
@@ -119,9 +121,9 @@ class ScaleInterfaceApp {
         mode: this.config.mode,
         config: {
           polling: this.config.polling,
-          validation: this.config.validation
+          validation: this.config.validation,
         },
-        hardware: this.config.mode === 'scale' ? 'Sterling 7600 via FTDI adapter' : 'Mock scale'
+        hardware: this.config.mode === 'scale' ? 'Sterling 7600 via FTDI adapter' : 'Mock scale',
       });
 
       return true;
@@ -155,11 +157,11 @@ class ScaleInterfaceApp {
     this.scaleController.on('reading', (reading: ScaleReading) => {
       this.readings.push(reading);
       this.logger?.logScaleReading(reading);
-      
+
       const value = reading.parsed.value;
       const unit = reading.parsed.unit || '';
       const status = reading.parsed.status;
-      
+
       if (status === 'ok') {
         console.log(`📊 ${reading.parsed.type}: ${value} ${unit}`);
       } else {
@@ -190,7 +192,7 @@ class ScaleInterfaceApp {
 
   async runDiagnostics(): Promise<boolean> {
     console.log('\n🔍 Running Scale Interface Diagnostics\n');
-    
+
     if (!this.scaleController) {
       console.error('❌ Scale controller not initialized');
       return false;
@@ -200,21 +202,33 @@ class ScaleInterfaceApp {
       // Test 1: List available ports
       console.log('1. Listing available serial ports...');
       const ports = await this.scaleController.listAvailablePorts();
-      
+
       if (ports.length === 0) {
-        this.testResults.push({ name: 'Port Detection', result: 'fail', details: 'No serial ports found' });
+        this.testResults.push({
+          name: 'Port Detection',
+          result: 'fail',
+          details: 'No serial ports found',
+        });
         console.log('   ❌ No serial ports detected');
       } else {
-        const ftdiPorts = ports.filter(p => p.manufacturer && p.manufacturer.toLowerCase().includes('ftdi'));
-        
+        const ftdiPorts = ports.filter(p => p.manufacturer?.toLowerCase().includes('ftdi'));
+
         if (ftdiPorts.length > 0) {
-          this.testResults.push({ name: 'Port Detection', result: 'pass', details: `Found ${ftdiPorts.length} FTDI port(s)` });
+          this.testResults.push({
+            name: 'Port Detection',
+            result: 'pass',
+            details: `Found ${ftdiPorts.length} FTDI port(s)`,
+          });
           console.log(`   ✅ Found ${ftdiPorts.length} FTDI adapter(s):`);
           ftdiPorts.forEach(port => {
             console.log(`      - ${port.path} (${port.manufacturer})`);
           });
         } else {
-          this.testResults.push({ name: 'Port Detection', result: 'warning', details: 'FTDI ports not found, but other ports available' });
+          this.testResults.push({
+            name: 'Port Detection',
+            result: 'warning',
+            details: 'FTDI ports not found, but other ports available',
+          });
           console.log('   ⚠️  No FTDI adapters found. Available ports:');
           ports.forEach(port => {
             console.log(`      - ${port.path} (${port.manufacturer || 'Unknown'})`);
@@ -225,16 +239,24 @@ class ScaleInterfaceApp {
       // Test 2: Connection test
       console.log('\n2. Testing scale connection...');
       const _connectionStart = Date.now();
-      
+
       try {
         await this.scaleController.connect();
         const connectionTime = Date.now() - _connectionStart;
-        
+
         if (connectionTime <= this.config.validation.connectionTimeout) {
-          this.testResults.push({ name: 'Connection', result: 'pass', details: `Connected in ${connectionTime}ms` });
+          this.testResults.push({
+            name: 'Connection',
+            result: 'pass',
+            details: `Connected in ${connectionTime}ms`,
+          });
           console.log(`   ✅ Connected successfully (${connectionTime}ms)`);
         } else {
-          this.testResults.push({ name: 'Connection', result: 'warning', details: `Slow connection: ${connectionTime}ms` });
+          this.testResults.push({
+            name: 'Connection',
+            result: 'warning',
+            details: `Slow connection: ${connectionTime}ms`,
+          });
           console.log(`   ⚠️  Connected but slow: ${connectionTime}ms`);
         }
       } catch (error: any) {
@@ -246,20 +268,34 @@ class ScaleInterfaceApp {
       // Test 3: Command response test
       console.log('\n3. Testing scale commands...');
       const commands = ['version', 'grossWeight', 'netWeight', 'count'];
-      
+
       for (const command of commands) {
         try {
           const response = await this.scaleController.sendCommand(command);
-          
+
           if (response.parsed.status === 'ok') {
-            this.testResults.push({ name: `Command ${command}`, result: 'pass', details: `${response.parsed.value} ${response.parsed.unit || ''}`.trim() });
-            console.log(`   ✅ ${command}: ${response.parsed.value} ${response.parsed.unit || ''}`.trim());
+            this.testResults.push({
+              name: `Command ${command}`,
+              result: 'pass',
+              details: `${response.parsed.value} ${response.parsed.unit || ''}`.trim(),
+            });
+            console.log(
+              `   ✅ ${command}: ${response.parsed.value} ${response.parsed.unit || ''}`.trim()
+            );
           } else {
-            this.testResults.push({ name: `Command ${command}`, result: 'warning', details: response.parsed.error });
+            this.testResults.push({
+              name: `Command ${command}`,
+              result: 'warning',
+              details: response.parsed.error,
+            });
             console.log(`   ⚠️  ${command}: ${response.parsed.error}`);
           }
         } catch (error: any) {
-          this.testResults.push({ name: `Command ${command}`, result: 'fail', details: error.message });
+          this.testResults.push({
+            name: `Command ${command}`,
+            result: 'fail',
+            details: error.message,
+          });
           console.log(`   ❌ ${command}: ${error.message}`);
         }
       }
@@ -272,8 +308,8 @@ class ScaleInterfaceApp {
   }
 
   async runPollingTest(duration: number = 60000): Promise<TestSummary> {
-    console.log(`\n📊 Starting ${duration/1000}s polling test...\n`);
-    
+    console.log(`\n📊 Starting ${duration / 1000}s polling test...\n`);
+
     if (!this.scaleController) {
       throw new Error('Scale controller not initialized');
     }
@@ -283,17 +319,21 @@ class ScaleInterfaceApp {
 
     const startTime = Date.now();
     const targetReadings = Math.floor(duration / this.config.polling.interval);
-    
-    console.log(`Target: ${targetReadings} readings at ${this.config.polling.interval}ms intervals`);
+
+    console.log(
+      `Target: ${targetReadings} readings at ${this.config.polling.interval}ms intervals`
+    );
     console.log('Press Ctrl+C to stop early\n');
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const statusInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
         const stats = this.scaleController!.getStats();
-        
-        console.log(`⏱️  ${Math.floor(elapsed/1000)}s | Readings: ${stats.responsesReceived} | Errors: ${stats.errors} | Packet Loss: ${(stats.packetLoss * 100).toFixed(1)}%`);
-        
+
+        console.log(
+          `⏱️  ${Math.floor(elapsed / 1000)}s | Readings: ${stats.responsesReceived} | Errors: ${stats.errors} | Packet Loss: ${(stats.packetLoss * 100).toFixed(1)}%`
+        );
+
         if (elapsed >= duration) {
           clearInterval(statusInterval);
           this.scaleController!.stopPolling();
@@ -311,14 +351,15 @@ class ScaleInterfaceApp {
       responsesReceived: 0,
       errors: 0,
       timeouts: 0,
-      packetLoss: 0
+      packetLoss: 0,
     };
-    
+
     const runtime = stats.runtime;
-    const successRate = stats.commandsSent > 0 ? (stats.responsesReceived / stats.commandsSent) * 100 : 0;
-    
+    const successRate =
+      stats.commandsSent > 0 ? (stats.responsesReceived / stats.commandsSent) * 100 : 0;
+
     console.log('\n📋 Test Summary:');
-    console.log(`├─ Runtime: ${Math.floor(runtime/1000)}s`);
+    console.log(`├─ Runtime: ${Math.floor(runtime / 1000)}s`);
     console.log(`├─ Commands sent: ${stats.commandsSent}`);
     console.log(`├─ Responses received: ${stats.responsesReceived}`);
     console.log(`├─ Errors: ${stats.errors}`);
@@ -335,24 +376,22 @@ class ScaleInterfaceApp {
       successRate: successRate / 100,
       packetLoss: stats.packetLoss,
       totalReadings: this.readings.length,
-      testResults: this.testResults
+      testResults: this.testResults,
     };
 
     // Log performance metrics
     if (this.readings.length > 0) {
-      const responseTimes = this.readings
-        .filter(r => r.responseTime)
-        .map(r => r.responseTime!);
-      
+      const responseTimes = this.readings.filter(r => r.responseTime).map(r => r.responseTime!);
+
       if (responseTimes.length > 0) {
         const avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
         const minResponseTime = Math.min(...responseTimes);
         const maxResponseTime = Math.max(...responseTimes);
-        
+
         summary.performance = {
           avgResponseTime,
           minResponseTime,
-          maxResponseTime
+          maxResponseTime,
         };
 
         this.logger?.logPerformanceMetrics({
@@ -360,13 +399,13 @@ class ScaleInterfaceApp {
           totalReadings: this.readings.length,
           successRate: summary.successRate,
           errors: summary.errors,
-          uptime: runtime
+          uptime: runtime,
         });
       }
     }
 
     this.logger?.logStats(stats);
-    
+
     return summary;
   }
 
@@ -385,15 +424,15 @@ class ScaleInterfaceApp {
       }
 
       const summary = this._generateTestSummary();
-      
+
       if (this.logger) {
         this.logger.endSession(summary);
-        
+
         // Log all test results
         this.testResults.forEach(test => {
           this.logger!.logTestResult(test.name, test.result, test.details);
         });
-        
+
         await this.logger.flush();
       }
 
@@ -416,10 +455,10 @@ program
   .option('-m, --mode <mode>', 'operation mode (testing|scale)', 'testing')
   .option('-d, --diagnostics', 'run diagnostics only')
   .option('-t, --time <seconds>', 'polling test duration in seconds', '60')
-  .action(async (options) => {
+  .action(async options => {
     const app = new ScaleInterfaceApp();
-    
-    if (!await app.initialize(options)) {
+
+    if (!(await app.initialize(options))) {
       process.exit(1);
     }
 
@@ -441,7 +480,7 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   console.error('Uncaught Exception:', error);
   process.exit(1);
 });

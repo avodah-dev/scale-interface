@@ -142,8 +142,12 @@ cp config.json config-custom.json
 # Edit config-custom.json
 CONFIG_FILE=config-custom.json pnpm start
 
-# Run TypeScript compiler checks
-pnpm run typecheck
+# Code quality checks
+pnpm run typecheck    # TypeScript type checking
+pnpm run lint         # Biome linting
+pnpm run format       # Biome formatting
+pnpm run check        # Combined linting and formatting check
+pnpm run check:fix    # Auto-fix linting and formatting issues
 ```
 
 All modules are written in TypeScript and designed for seamless integration into the future Electron application with minimal changes required. The codebase features:
@@ -151,4 +155,5 @@ All modules are written in TypeScript and designed for seamless integration into
 - **Full Type Safety**: Comprehensive TypeScript types for all modules and interfaces
 - **Zero-Config Execution**: TSX enables direct TypeScript execution without compilation
 - **Strict Type Checking**: Catches potential errors at development time
+- **Code Quality**: Biome provides fast, unified linting and formatting
 - **IDE Support**: Full IntelliSense and auto-completion in TypeScript-aware editors

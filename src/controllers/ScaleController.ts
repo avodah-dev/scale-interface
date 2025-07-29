@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import SerialManager from '../managers/SerialManager.js';
 import type { Config } from '../managers/ConfigManager';
+import SerialManager from '../managers/SerialManager.js';
 import type DataLogger from '../utils/DataLogger';
 
 interface ScaleStats {
@@ -49,7 +49,7 @@ class ScaleController extends EventEmitter {
     errors: 0,
     timeouts: 0,
     startTime: null,
-    lastReading: null
+    lastReading: null,
   };
 
   constructor(config: Config, logger: DataLogger) {
@@ -61,7 +61,7 @@ class ScaleController extends EventEmitter {
   }
 
   private _setupEventHandlers(): void {
-    this.serialManager.on('connected', (info) => {
+    this.serialManager.on('connected', info => {
       this.logger.info('Scale connected', info);
       this.emit('connected', info);
     });
@@ -82,7 +82,7 @@ class ScaleController extends EventEmitter {
       this.emit('error', error);
     });
 
-    this.serialManager.on('reconnecting', (info) => {
+    this.serialManager.on('reconnecting', info => {
       this.logger.info('Scale reconnecting', info);
       this.emit('reconnecting', info);
     });
@@ -98,27 +98,27 @@ class ScaleController extends EventEmitter {
   }
 
   async connect(portPath: string | null = null): Promise<void> {
-    if (!portPath) {
+    let connectionPath = portPath;
+
+    if (!connectionPath) {
       // Auto-detect port if not specified
       const ports = await this.listAvailablePorts();
-      const ftdiPorts = ports.filter(p => 
-        p.manufacturer && p.manufacturer.toLowerCase().includes('ftdi')
-      );
-      
+      const ftdiPorts = ports.filter(p => p.manufacturer?.toLowerCase().includes('ftdi'));
+
       if (ftdiPorts.length === 0) {
         throw new Error('No FTDI USB-to-Serial adapter found. Please connect Gearmo adapter.');
       }
-      
+
       if (ftdiPorts.length > 1) {
-        this.logger.warn('Multiple FTDI adapters found, using first one', { 
-          ports: ftdiPorts.map(p => p.path) 
+        this.logger.warn('Multiple FTDI adapters found, using first one', {
+          ports: ftdiPorts.map(p => p.path),
         });
       }
-      
-      portPath = ftdiPorts[0].path;
+
+      connectionPath = ftdiPorts[0].path;
     }
 
-    await this.serialManager.connect(portPath!);
+    await this.serialManager.connect(connectionPath!);
   }
 
   disconnect(): void {
@@ -128,9 +128,9 @@ class ScaleController extends EventEmitter {
 
   private _handleSerialData(data: Buffer): void {
     this.responseBuffer += data.toString();
-    
+
     // Process complete responses (ending with \r\n or \n)
-    let lines = this.responseBuffer.split(/\r?\n/);
+    const lines = this.responseBuffer.split(/\r?\n/);
     this.responseBuffer = lines.pop() || ''; // Keep incomplete line in buffer
 
     for (const line of lines) {
@@ -141,7 +141,10 @@ class ScaleController extends EventEmitter {
   }
 
   private _processResponse(response: string): void {
-    this.logger.debug('Processing scale response', { response, pendingCommand: this.pendingCommand });
+    this.logger.debug('Processing scale response', {
+      response,
+      pendingCommand: this.pendingCommand,
+    });
 
     // Clear command timeout
     if (this.commandTimeout) {
@@ -151,7 +154,7 @@ class ScaleController extends EventEmitter {
 
     // Parse response based on Sterling 7600 protocol
     const parsed = this._parseResponse(response);
-    
+
     this.stats.responsesReceived++;
     this.stats.lastReading = Date.now();
 
@@ -159,7 +162,7 @@ class ScaleController extends EventEmitter {
       raw: response,
       parsed,
       command: this.pendingCommand ?? '',
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     // Clear pending command
@@ -172,7 +175,7 @@ class ScaleController extends EventEmitter {
       value: null,
       unit: null,
       status: 'ok',
-      error: null
+      error: null,
     };
 
     // Handle error responses first
@@ -180,7 +183,7 @@ class ScaleController extends EventEmitter {
       result.type = 'error';
       result.status = 'error';
       result.error = response;
-      
+
       switch (response) {
         case 'Err.80':
           result.error = 'Serial command data error';
@@ -262,7 +265,7 @@ class ScaleController extends EventEmitter {
     // If we can't parse it, return as raw
     result.type = 'raw';
     result.value = response;
-    
+
     return result;
   }
 
@@ -284,13 +287,13 @@ class ScaleController extends EventEmitter {
         return await this._executeCommand(command, commandName, attempt);
       } catch (error: any) {
         attempt++;
-        
+
         if (attempt > maxRetries) {
           this.stats.errors++;
           this.logger.error('Command failed after all retries', {
             command: commandName,
             attempts: attempt,
-            error: error.message
+            error: error.message,
           });
           throw error;
         }
@@ -299,7 +302,7 @@ class ScaleController extends EventEmitter {
           command: commandName,
           attempt,
           maxRetries,
-          error: error.message
+          error: error.message,
         });
 
         // Brief delay before retry
@@ -310,8 +313,12 @@ class ScaleController extends EventEmitter {
     throw new Error(`Failed to send command ${commandName} after ${maxRetries} attempts`);
   }
 
-  private _executeCommand(command: string, commandName: string, attempt: number): Promise<ScaleResponse> {
-    return new Promise(async (resolve, reject) => {
+  private _executeCommand(
+    command: string,
+    commandName: string,
+    attempt: number
+  ): Promise<ScaleResponse> {
+    return new Promise((resolve, reject) => {
       this.pendingCommand = commandName;
       this.stats.commandsSent++;
 
@@ -334,18 +341,21 @@ class ScaleController extends EventEmitter {
 
       this.once('response', responseHandler);
 
-      try {
-        await this.serialManager.write(command);
-        await this.serialManager.drain();
-      } catch (error) {
-        if (this.commandTimeout) {
-          clearTimeout(this.commandTimeout);
-          this.commandTimeout = null;
+      // Execute the async operations
+      (async () => {
+        try {
+          await this.serialManager.write(command);
+          await this.serialManager.drain();
+        } catch (error) {
+          if (this.commandTimeout) {
+            clearTimeout(this.commandTimeout);
+            this.commandTimeout = null;
+          }
+          this.removeListener('response', responseHandler);
+          this.pendingCommand = null;
+          reject(error);
         }
-        this.removeListener('response', responseHandler);
-        this.pendingCommand = null;
-        reject(error);
-      }
+      })();
     });
   }
 
@@ -391,10 +401,10 @@ class ScaleController extends EventEmitter {
 
     this.isPolling = true;
     this.stats.startTime = Date.now();
-    
-    this.logger.info('Starting scale polling', { 
-      command: commandName, 
-      interval: this.config.polling.interval 
+
+    this.logger.info('Starting scale polling', {
+      command: commandName,
+      interval: this.config.polling.interval,
     });
 
     this._poll(commandName);
@@ -406,9 +416,9 @@ class ScaleController extends EventEmitter {
     }
 
     this.sendCommand(commandName)
-      .then((response) => {
+      .then(response => {
         this.emit('reading', response);
-        
+
         // Schedule next poll
         if (this.isPolling) {
           this.pollingTimer = setTimeout(() => {
@@ -416,10 +426,10 @@ class ScaleController extends EventEmitter {
           }, this.config.polling.interval);
         }
       })
-      .catch((error) => {
+      .catch(error => {
         this.logger.error('Polling error', { error: error.message });
         this.emit('pollingError', error);
-        
+
         // Continue polling despite errors
         if (this.isPolling) {
           this.pollingTimer = setTimeout(() => {
@@ -439,7 +449,7 @@ class ScaleController extends EventEmitter {
     }
 
     this.isPolling = false;
-    
+
     if (this.pollingTimer) {
       clearTimeout(this.pollingTimer);
       this.pollingTimer = null;
@@ -450,24 +460,28 @@ class ScaleController extends EventEmitter {
 
   getStats(): ExtendedStats {
     const runtime = this.stats.startTime ? Date.now() - this.stats.startTime : 0;
-    const packetLoss = this.stats.commandsSent > 0 ? 
-      (this.stats.commandsSent - this.stats.responsesReceived) / this.stats.commandsSent : 0;
+    const packetLoss =
+      this.stats.commandsSent > 0
+        ? (this.stats.commandsSent - this.stats.responsesReceived) / this.stats.commandsSent
+        : 0;
 
     return {
       ...this.stats,
       runtime,
       packetLoss,
       isPolling: this.isPolling,
-      connectionInfo: this.serialManager.getConnectionInfo()
+      connectionInfo: this.serialManager.getConnectionInfo(),
     };
   }
 
   // Health check
   isHealthy(): boolean {
     const stats = this.getStats();
-    return this.serialManager.getConnectionInfo().isConnected && 
-           this.serialManager.isConnectionHealthy() &&
-           stats.packetLoss <= this.config.validation.maxPacketLoss;
+    return (
+      this.serialManager.getConnectionInfo().isConnected &&
+      this.serialManager.isConnectionHealthy() &&
+      stats.packetLoss <= this.config.validation.maxPacketLoss
+    );
   }
 }
 
