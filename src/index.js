@@ -102,9 +102,23 @@ class ScaleInterfaceApp {
       const value = reading.parsed.value;
       const unit = reading.parsed.unit || '';
       const status = reading.parsed.status;
+      const type = reading.parsed.type;
+      
+      // Track previous value to show changes
+      if (!this.lastValue) this.lastValue = value;
+      const change = value - this.lastValue;
+      const changeStr = change > 0 ? ` ↑${change}` : change < 0 ? ` ↓${Math.abs(change)}` : '';
+      this.lastValue = value;
       
       if (status === 'ok') {
-        console.log(`📊 ${reading.parsed.type}: ${value} ${unit}`);
+        const timestamp = new Date().toLocaleTimeString();
+        if (type === 'count') {
+          console.log(`[${timestamp}] Count: ${value} ${unit}${changeStr}`);
+        } else if (type === 'grossWeight' || type === 'netWeight') {
+          console.log(`[${timestamp}] Weight: ${value.toFixed(3)} ${unit}${changeStr}`);
+        } else {
+          console.log(`[${timestamp}] ${type}: ${value} ${unit}${changeStr}`);
+        }
       } else {
         console.log(`⚠️  ${reading.parsed.type}: ${reading.parsed.error || 'Error'}`);
       }
@@ -209,10 +223,14 @@ class ScaleInterfaceApp {
     }
   }
 
-  async runPollingTest(duration = 60000) {
-    console.log(`\n📊 Starting ${duration/1000}s polling test...\n`);
+  async runPollingTest(duration = 60000, command = 'count') {
+    console.log(`\n📊 Starting ${duration/1000}s polling test (${command})...\n`);
     
-    this.scaleController.startPolling('grossWeight');
+    // Suppress debug logs during polling for cleaner output
+    const originalLevel = this.logger.logger.level;
+    this.logger.logger.level = 'error';
+    
+    this.scaleController.startPolling(command);
     this.isRunning = true;
 
     const startTime = Date.now();
@@ -232,6 +250,8 @@ class ScaleInterfaceApp {
           clearInterval(statusInterval);
           this.scaleController.stopPolling();
           this.isRunning = false;
+          // Restore original logging level
+          this.logger.logger.level = originalLevel;
           resolve(this._generateTestSummary());
         }
       }, 5000);
@@ -342,6 +362,7 @@ program
   .option('-m, --mode <mode>', 'operation mode (testing|scale)', 'testing')
   .option('-d, --diagnostics', 'run diagnostics only')
   .option('-t, --time <seconds>', 'polling test duration in seconds', '60')
+  .option('-c, --command <command>', 'polling command (count|grossWeight|netWeight)', 'count')
   .action(async (options) => {
     const app = new ScaleInterfaceApp();
     
@@ -355,8 +376,9 @@ program
       process.exit(success ? 0 : 1);
     } else {
       const duration = parseInt(options.time) * 1000;
+      const command = options.command || 'count';
       await app.runDiagnostics();
-      await app.runPollingTest(duration);
+      await app.runPollingTest(duration, command);
       await app.shutdown();
     }
   });

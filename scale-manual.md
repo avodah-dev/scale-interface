@@ -73,18 +73,26 @@ The Sterling 7600 accepts 3-letter commands followed by carriage return (`<cr>`)
 
 ### Standard Weight Response
 ```
-Gross 100.55 lb.<cr><lf>
+Manual Format: Gross 100.55 lb.<cr><lf>
+Actual Format (v4.31.0): SGWGross   100.55 lb<cr><lf>
+Alternative Format: WGross   100.55 lb<cr><lf>
 ```
+*Note: Sterling 7600 v4.31.0 echoes command in response (verified 2025-08-19)*
 
 ### Count Response (Counting Mode)
 ```
-Count 157 Pieces<cr><lf>
+Manual Format: Count 157 Pieces<cr><lf>
+Actual Format (v4.31.0): SCOCount   157 Pieces<cr><lf>
+Alternative Format: OCount   157 Pieces<cr><lf>
 ```
+*Note: Supports negative counts (e.g., -14 Pieces)*
 
 ### Piece Weight Response
 ```
-Piece Weight 0.6350 lb.<cr><lf>
+Manual Format: Piece Weight 0.6350 lb.<cr><lf>
+Expected Format (v4.31.0): SPWPiece Weight 0.6350 lb<cr><lf>
 ```
+*Note: Not tested but command echo expected based on pattern*
 
 ## Special Emulation Modes
 
