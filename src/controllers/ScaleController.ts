@@ -219,8 +219,8 @@ class ScaleController extends EventEmitter {
       return result;
     }
 
-    // Parse weight responses
-    const weightMatch = response.match(/^(Gross|Net)\s+([\d.-]+)\s+(\w+)\.?$/i);
+    // Parse weight responses (with command echo)
+    const weightMatch = response.match(/^(?:W|SGW|SNW)?(Gross|Net)\s+([\d.-]+)\s+(\w+)\.?$/i);
     if (weightMatch) {
       result.type = weightMatch[1]!.toLowerCase() === 'gross' ? 'grossWeight' : 'netWeight';
       result.value = parseFloat(weightMatch[2]!);
@@ -228,8 +228,8 @@ class ScaleController extends EventEmitter {
       return result;
     }
 
-    // Parse count response
-    const countMatch = response.match(/^Count\s+(\d+)\s+Pieces$/i);
+    // Parse count response (with command echo)
+    const countMatch = response.match(/^(?:SCO)?Count\s+([\d.-]+)\s+Pieces/i);
     if (countMatch) {
       result.type = 'count';
       result.value = parseInt(countMatch[1]!);
@@ -237,8 +237,8 @@ class ScaleController extends EventEmitter {
       return result;
     }
 
-    // Parse piece weight response
-    const pieceWeightMatch = response.match(/^Piece Weight\s+([\d.-]+)\s+(\w+)\.?$/i);
+    // Parse piece weight response (with command echo)
+    const pieceWeightMatch = response.match(/^(?:SPW)?Piece\s*Weight\s+([\d.-]+)\s+(\w+)\.?$/i);
     if (pieceWeightMatch) {
       result.type = 'pieceWeight';
       result.value = parseFloat(pieceWeightMatch[1]!);
@@ -246,8 +246,8 @@ class ScaleController extends EventEmitter {
       return result;
     }
 
-    // Parse version response
-    const versionMatch = response.match(/^V\s+([\d.]+)$/);
+    // Parse version response (with command echo)
+    const versionMatch = response.match(/^(?:SVN)?V\s*([\d.]+)$/);
     if (versionMatch) {
       result.type = 'version';
       result.value = versionMatch[1]!;
