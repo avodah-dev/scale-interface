@@ -2,21 +2,34 @@
   "name": "scale-interface",
   "version": "1.0.0",
   "description": "Console application for Sterling 7600 Scale RS-232 communication testing",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "node src/index.js",
-    "start:scale": "node src/index.js --mode=scale --diagnostics",
-    "start:hardware": "node src/index.js --mode=hardware-testing --diagnostics", 
-    "start:test": "node src/index.js --mode=setup-testing --diagnostics",
-    "dev": "node --watch src/index.js",
-    "test": "node src/index.js --mode=setup-testing"
+    "start": "tsx src/index.ts",
+    "start:scale": "tsx src/index.ts --mode=scale --diagnostics",
+    "start:hardware": "tsx src/index.ts --mode=hardware-testing --diagnostics",
+    "start:test": "tsx src/index.ts --mode=setup-testing --diagnostics",
+    "dev": "tsx watch src/index.ts",
+    "test": "tsx src/index.ts --mode=setup-testing",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome lint ./src",
+    "lint:fix": "biome lint --write ./src",
+    "format": "biome format --write ./src",
+    "check": "biome check ./src",
+    "check:fix": "biome check --write ./src"
   },
   "dependencies": {
     "commander": "^14.0.0",
     "joi": "^17.13.3",
     "serialport": "^13.0.0",
     "winston": "^3.17.0"
+  },
+  "packageManager": "pnpm@10.11.1+sha512.e519b9f7639869dc8d5c3c5dfef73b3f091094b0a006d7317353c72b124e80e1afd429732e28705ad6bfa1ee879c1fce46c128ccebd3192101f43dd67c667912",
+  "devDependencies": {
+    "@biomejs/biome": "^2.1.2",
+    "@types/node": "^24.1.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
   }
 }
