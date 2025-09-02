@@ -163,19 +163,25 @@ class ScaleInterfaceApp {
       const unit = reading.parsed.unit || '';
       const status = reading.parsed.status;
       const type = reading.parsed.type;
-      
+
       // Track previous value to show changes
-      if (!this.lastValue) this.lastValue = value;
-      const change = value - this.lastValue;
-      const changeStr = change > 0 ? ` ↑${change}` : change < 0 ? ` ↓${Math.abs(change)}` : '';
-      this.lastValue = value;
-      
+      let changeStr = '';
+      if (typeof value === 'number') {
+        if (!this.lastValue) this.lastValue = value;
+        if (typeof this.lastValue === 'number') {
+          const change = value - this.lastValue;
+          changeStr = change > 0 ? ` ↑${change}` : change < 0 ? ` ↓${Math.abs(change)}` : '';
+        }
+        this.lastValue = value;
+      }
+
       if (status === 'ok') {
         const timestamp = new Date().toLocaleTimeString();
         if (type === 'count') {
           console.log(`[${timestamp}] Count: ${value} ${unit}${changeStr}`);
         } else if (type === 'grossWeight' || type === 'netWeight') {
-          console.log(`[${timestamp}] Weight: ${value.toFixed(3)} ${unit}${changeStr}`);
+          const displayValue = typeof value === 'number' ? value.toFixed(3) : value;
+          console.log(`[${timestamp}] Weight: ${displayValue} ${unit}${changeStr}`);
         } else {
           console.log(`[${timestamp}] ${type}: ${value} ${unit}${changeStr}`);
         }
@@ -323,18 +329,18 @@ class ScaleInterfaceApp {
   }
 
   async runPollingTest(duration: number = 60000, command: string = 'count'): Promise<TestSummary> {
-    console.log(`\n📊 Starting ${duration/1000}s polling test (${command})...\n`);
-    
+    console.log(`\n📊 Starting ${duration / 1000}s polling test (${command})...\n`);
+
     if (!this.scaleController) {
       throw new Error('Scale controller not initialized');
     }
-    
+
     // Suppress debug logs during polling for cleaner output
     const originalLevel = this.logger?.logger.level;
     if (this.logger) {
       this.logger.logger.level = 'error';
     }
-    
+
     this.scaleController.startPolling(command);
     this.isRunning = true;
 

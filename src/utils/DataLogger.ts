@@ -50,7 +50,7 @@ interface Stats {
 
 class DataLogger {
   private config: Config;
-  private logger!: winston.Logger;
+  public logger!: winston.Logger;
   private scaleDataLogger!: winston.Logger;
 
   constructor(config: Config) {
