@@ -275,8 +275,8 @@
         .screenshot-label {
             position: absolute;
             top: 15px;
-            left: 15px;
-            background: #2a5298;
+            right: 15px;
+            background: #ff6b35;
             color: white;
             padding: 5px 15px;
             border-radius: 5px;
@@ -537,6 +537,9 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
+            <div style="margin-bottom: 30px;">
+                <img src="../../avodah-assets/blue-logo.png" alt="Avodah Logo" style="height: 50px;">
+            </div>
             <h1>Digital Scale Integration System</h1>
             <div class="subtitle">Production Tracking Solution for UQSA Manufacturing</div>
             <div class="date">Proposal Date: January 2025</div>
@@ -604,41 +607,64 @@
             
             <h3>Station Interface - Employee Login</h3>
             <div class="screenshot-container">
-                <span class="screenshot-label">Screenshot</span>
-                <div class="screenshot-icon">🖼️</div>
-                <div class="screenshot-placeholder">
-                    Insert screenshot: station-interface.html (Employee ID screen)<br>
-                    Shows numeric keypad for employee login
+                <span class="screenshot-label">Mock Up</span>
+                <img src="../proposal-images/station-enter-employee.png" alt="Employee Login Screen" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
+                    Simple numeric keypad for quick employee ID entry. Large buttons designed for industrial environments.
                 </div>
             </div>
 
-            <h3>Station Interface - Production Display</h3>
+            <h3>Station Interface - Part Number Entry</h3>
             <div class="screenshot-container">
-                <span class="screenshot-label">Screenshot</span>
-                <div class="screenshot-icon">🖼️</div>
-                <div class="screenshot-placeholder">
-                    Insert screenshot: station-interface.html (Active screen)<br>
-                    Shows current pieces, pieces/hour, and Record Count button
+                <span class="screenshot-label">Mock Up</span>
+                <img src="../proposal-images/station-enter-part.png" alt="Part Number Entry Screen" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
+                    Employees select their part number from a simple list. Shows both part number and description for easy identification.
                 </div>
             </div>
 
-            <h3>Management Dashboard</h3>
+            <h3>Station Interface - Active Production</h3>
             <div class="screenshot-container">
-                <span class="screenshot-label">Screenshot</span>
-                <div class="screenshot-icon">🖼️</div>
-                <div class="screenshot-placeholder">
-                    Insert screenshot: dashboard.html<br>
-                    Shows all 13 stations with color-coded status
+                <span class="screenshot-label">Mock Up</span>
+                <img src="../proposal-images/station-active.png" alt="Active Production Screen" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
+                    Real-time display showing current piece count, production rate (pieces/hour), and a large "Record Count" button. The interface automatically tracks weight changes and calculates metrics without employee intervention.
                 </div>
             </div>
 
-            <h3>Admin Panel</h3>
+            <h3>Management Dashboard - Overview</h3>
             <div class="screenshot-container">
-                <span class="screenshot-label">Screenshot</span>
-                <div class="screenshot-icon">🖼️</div>
-                <div class="screenshot-placeholder">
-                    Insert screenshot: admin-panel.html<br>
-                    Shows simple employee and part management
+                <span class="screenshot-label">Mock Up</span>
+                <img src="../proposal-images/dashboard-station-overview.png" alt="Dashboard Overview" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
+                    Color-coded overview of all 13 stations at a glance. Green indicates active production, yellow shows idle stations, and red highlights stations needing attention. Real-time updates every second.
+                </div>
+            </div>
+
+            <h3>Management Dashboard - Station Details</h3>
+            <div class="screenshot-container">
+                <span class="screenshot-label">Mock Up</span>
+                <img src="../proposal-images/dashboard-station-detail.png" alt="Station Detail View" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
+                    Click any station to see detailed production graphs, hourly trends, and employee performance metrics. Export data directly to Excel for further analysis.
+                </div>
+            </div>
+
+            <h3>Admin Panel - Employee Management</h3>
+            <div class="screenshot-container">
+                <span class="screenshot-label">Mock Up</span>
+                <img src="../proposal-images/admin-employee-management.png" alt="Employee Management" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
+                    Simple interface to add and manage employee IDs. No complex setup required - just ID number and name for easy identification on reports.
+                </div>
+            </div>
+
+            <h3>Admin Panel - Parts Management</h3>
+            <div class="screenshot-container">
+                <span class="screenshot-label">Mock Up</span>
+                <img src="../proposal-images/admin-parts-management.png" alt="Parts Management" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
+                    Maintain your parts list with support for both assembly and sorting operations. Set piece weights for accurate counting or use direct counting mode for pre-packaged items.
                 </div>
             </div>
         </section>
@@ -1037,15 +1063,17 @@
             </p>
             <div style="margin-top: 30px;">
                 <span style="display: block; margin-bottom: 10px;">Questions? Contact your implementation team:</span>
-                <strong style="font-size: 18px;">Technical Lead & Partner Nate</strong>
+                <strong style="font-size: 18px;">Avodah Development Team</strong>
             </div>
         </div>
 
         <!-- Footer -->
         <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+            <div style="margin-bottom: 15px; font-size: 24px; color: #95a5a6; opacity: 0.5;">▲</div>
             <p style="font-size: 12px; color: #95a5a6;">
                 This proposal is valid for 30 days from date of issue.<br>
-                Hardware prices subject to change based on component availability.
+                Hardware prices subject to change based on component availability.<br>
+                <span style="margin-top: 10px; display: block;">© 2025 Avodah - Radically Better Software</span>
             </p>
         </div>
     </div>

@@ -313,6 +313,8 @@
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            justify-content: center;
+            align-items: center;
         }
 
         .summary-card-title {
@@ -333,12 +335,40 @@
             margin-top: 5px;
         }
 
+        .summary-card-action {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2a5298;
+            height: 100%;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .positive {
             color: #27ae60;
         }
 
         .negative {
             color: #e74c3c;
+        }
+
+        .action-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-color: #2a5298;
+        }
+
+        .action-card .summary-card-value {
+            font-size: 48px;
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -366,15 +396,11 @@
     <div class="dashboard-container">
         <!-- Summary Cards -->
         <div class="summary-cards">
-            <div class="summary-card">
-                <div class="summary-card-title">Average Rate</div>
-                <div class="summary-card-value">1,875</div>
-                <div class="summary-card-change positive">↑ 12% from yesterday</div>
+            <div class="summary-card action-card" onclick="generateHourlyReport()">
+                <div class="summary-card-action">Hourly Report</div>
             </div>
-            <div class="summary-card">
-                <div class="summary-card-title">Best Performer</div>
-                <div class="summary-card-value">Station 3</div>
-                <div class="summary-card-change">2,145 pieces/hour</div>
+            <div class="summary-card action-card" onclick="generateDailyReport()">
+                <div class="summary-card-action">Daily Report</div>
             </div>
             <div class="summary-card">
                 <div class="summary-card-title">Needs Attention</div>
@@ -716,6 +742,15 @@
                 closeModal();
             }
         });
+        
+        // Report generation functions
+        function generateHourlyReport() {
+            alert('Hourly Report Generation\n\nThis would generate a detailed report for the current hour including:\n- Production totals by station\n- Performance metrics\n- Employee productivity data');
+        }
+        
+        function generateDailyReport() {
+            alert('Daily Report Generation\n\nThis would generate a comprehensive daily report including:\n- Complete production summary\n- Station performance analysis\n- Target vs actual comparisons\n- Export options (PDF, Excel)');
+        }
         
         // Simulate real-time updates
         setInterval(() => {

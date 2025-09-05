@@ -1,0 +1,60 @@
+Epic	Task	Phase	Owner	Days	Hours	Notes
+						
+HARDWARE SETUP & CONFIGURATION						
+Hardware Setup	Screen setup and configuration	1	Engineer	0.5	4	Single station
+Hardware Setup	Order and build 12 station setups	2	Engineer	1	8	Full system build
+						
+INFRASTRUCTURE & DASHBOARD SETUP						
+Infrastructure	Heroku, CrunchBridge, Domain, CI/CD	1	Lead-Engineer	1	8	Development environment
+Infrastructure	Dashboard app setup & authentication	1	Lead-Engineer	1	8	Dashboard foundation
+Infrastructure	Production config, monitoring, backup	2	Lead-Engineer	1	8	Production environment
+Infrastructure	Production support & optimization	2	Lead-Engineer	1	8	Production readiness
+						
+ELECTRON APPLICATION						
+Electron Core	Monorepo, React+Node, SQLite, API design	1	Lead-Engineer	1	8	Foundation
+Electron Core	Auto-update, offline mode, error recovery	2	Engineer	1	8	Production readiness
+						
+STATION INTERFACE						
+Station Features	Employee sign-in & parts management	1	Engineer	1	8	Core functionality
+Station Features	Main weighing interface & productivity	1	Engineer	1	8	Core functionality
+						
+DATA SYNCHRONIZATION						
+Data Sync	Local storage & station-to-cloud sync	1	Engineer	1	8	Basic sync
+Data Sync	WiFi failure handling & offline mode	2	Engineer	1.5	12	Advanced sync
+						
+DASHBOARD FEATURES						
+Dashboard	Main dashboard view	1	Engineer	1	8	Basic views
+Dashboard	Scale-focused views	1	Engineer	1	8	Basic views
+Dashboard	Basic reporting	1	Engineer	1	8	Basic views
+Dashboard	Admin management panel	2	Engineer	1	8	Advanced features
+Dashboard	Dashboard maturity	2	Engineer	2	16	Advanced features
+Dashboard	Advanced reporting	2	Engineer	2	16	Advanced features
+						
+ON-SITE DEPLOYMENT						
+Deployment	Single station setup & training	1	Engineer	1	8	Phase 1 on-site
+Deployment	12-station deployment Day 1	2	Engineer	1	8	Hardware installation
+Deployment	12-station deployment Day 2	2	Engineer	1	8	Software & config
+Deployment	12-station deployment Day 3	2	Engineer	1	8	Testing & training
+						
+SUMMARY BY ROLE						
+Lead-Engineer	Infrastructure & Dashboard Setup		Lead-Engineer	4	32	
+Lead-Engineer	Electron Foundation		Lead-Engineer	1	8	
+Engineer	Hardware Setup		Engineer	1.5	12	
+Engineer	Electron Production		Engineer	1	8	
+Engineer	Station Interface		Engineer	2	16	
+Engineer	Data Sync		Engineer	2.5	20	
+Engineer	Dashboard Features		Engineer	8	64	
+Engineer	On-site Deployments		Engineer	4	32	
+						
+TOTALS						
+	Phase 1 Total			11.5	92	
+	Phase 2 Total			11.5	92	
+	Project Base Total			23	184	
+	20% Risk Buffer			4.6	37	
+	Project Total with Buffer			27.6	221	
+						
+COST BREAKDOWN						
+	Lead-Engineer	40 hours	$175/hr		$7,000	
+	Engineer	144 hours	$150/hr		$21,600	
+	Hardware (screens)	13 stations	$300/station		$3,900	
+	Total Project Cost				$32,500	

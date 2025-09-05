@@ -23,6 +23,7 @@
             max-height: 720px;
             margin: 0 auto;
             border: 2px solid #333;
+            padding-top: 100px;
         }
 
         .screen {
@@ -60,23 +61,6 @@
             opacity: 0.9;
         }
         
-        .step-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .step-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-        }
-        
-        .step-dot.active {
-            background: rgba(255,255,255,0.8);
-        }
 
         .pin-display {
             background: rgba(0,0,0,0.3);
@@ -317,11 +301,6 @@
     <div class="screen login-screen active" id="employeeScreen">
         <div class="login-header">
             <div class="company-logo">UQSA Manufacturing</div>
-            <div class="step-indicator">
-                <div class="step-dot active"></div>
-                <div class="step-dot"></div>
-                <div class="step-dot"></div>
-            </div>
             <div class="login-prompt">Enter Your Employee ID</div>
         </div>
         <div class="pin-display" id="employeeDisplay"></div>
@@ -344,11 +323,6 @@
     <!-- Part Number Screen -->
     <div class="screen setup-screen" id="partScreen">
         <div class="setup-header">
-            <div class="step-indicator">
-                <div class="step-dot"></div>
-                <div class="step-dot active"></div>
-                <div class="step-dot"></div>
-            </div>
             <div class="employee-info" id="employeeInfo">Employee #1234</div>
             <div class="part-prompt">Enter Part Number</div>
         </div>
@@ -372,11 +346,6 @@
     <!-- Active Station Screen -->
     <div class="screen active-screen" id="activeScreen">
         <div class="status-indicator"></div>
-        <div class="step-indicator" style="padding: 10px;">
-            <div class="step-dot"></div>
-            <div class="step-dot"></div>
-            <div class="step-dot active"></div>
-        </div>
         <div class="station-header">
             <div class="station-info">
                 <div class="station-number">Station 5</div>
@@ -434,11 +403,20 @@
                 const pph = Math.floor(Math.random() * 101) + 1000; // Random between 1000-1100
                 document.getElementById('piecesPerHour').innerText = pph.toLocaleString();
             }
-        }, 5000); // Update every 5 seconds
+        }, 2000); // Update every 2 seconds
         
         function addDigit(digit) {
-            employeeId += digit;
-            document.getElementById('employeeDisplay').innerText = employeeId;
+            if (employeeId.length < 4) {
+                employeeId += digit;
+                document.getElementById('employeeDisplay').innerText = employeeId;
+                
+                // Auto-submit when 4 digits are entered
+                if (employeeId.length === 4) {
+                    setTimeout(() => {
+                        submitEmployee();
+                    }, 500);
+                }
+            }
         }
         
         function clearEmployee() {
@@ -460,8 +438,17 @@
         }
         
         function addPart(digit) {
-            partNumber += digit;
-            document.getElementById('partDisplay').innerText = partNumber;
+            if (partNumber.length < 5) {
+                partNumber += digit;
+                document.getElementById('partDisplay').innerText = partNumber;
+                
+                // Auto-submit when 5 digits are entered
+                if (partNumber.length === 5) {
+                    setTimeout(() => {
+                        startWork();
+                    }, 500);
+                }
+            }
         }
         
         function clearPart() {
