@@ -14,35 +14,51 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
             line-height: 1.6;
-            color: #2c3e50;
-            background: white;
+            color: #1a1f36;
+            background: #f7f9fc;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
             padding: 40px 20px;
+            background: white;
+            min-height: 100vh;
         }
 
         /* Header Styles */
         .header {
             text-align: center;
-            padding: 60px 20px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
             color: white;
-            margin: -40px -20px 40px;
+            margin: -40px -20px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
         }
 
         .header h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-            font-weight: 600;
+            font-size: 42px;
+            margin-bottom: 15px;
+            font-weight: 300;
+            letter-spacing: -0.5px;
         }
 
         .header .subtitle {
-            font-size: 20px;
-            opacity: 0.9;
-            font-weight: 300;
+            font-size: 18px;
+            opacity: 0.95;
+            font-weight: 400;
+            letter-spacing: 0.5px;
         }
 
         .header .date {
@@ -58,40 +74,44 @@
         }
 
         h2 {
-            color: #2a5298;
+            color: #1a1f36;
             font-size: 28px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e8ecf1;
+            font-weight: 400;
         }
 
         h3 {
-            color: #2c3e50;
+            color: #1a1f36;
             font-size: 20px;
             margin-bottom: 15px;
             margin-top: 25px;
+            font-weight: 500;
         }
 
         p {
             margin-bottom: 15px;
-            color: #5a6c7d;
+            color: #4a5568;
             line-height: 1.8;
         }
 
         .lead {
             font-size: 18px;
-            color: #2c3e50;
-            font-weight: 500;
-            margin-bottom: 25px;
+            color: #1a1f36;
+            font-weight: 400;
+            margin-bottom: 30px;
+            line-height: 1.7;
         }
 
         /* Executive Summary Box */
         .summary-box {
-            background: #f8f9fa;
-            border-left: 4px solid #2a5298;
-            padding: 25px;
-            margin: 30px 0;
-            border-radius: 0 8px 8px 0;
+            background: white;
+            border-left: 3px solid #4A90E2;
+            padding: 30px;
+            margin: 35px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
         .summary-box ul {
@@ -99,8 +119,8 @@
         }
 
         .summary-box li {
-            margin-bottom: 10px;
-            color: #2c3e50;
+            margin-bottom: 12px;
+            color: #1a1f36;
         }
 
         /* Key Features */
@@ -113,40 +133,41 @@
 
         .feature-card {
             background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
+            border: 1px solid #e8ecf1;
+            border-radius: 12px;
+            padding: 25px;
             transition: all 0.3s;
         }
 
         .feature-card:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transform: translateY(-3px);
+            border-color: #d1d9e6;
         }
 
         .feature-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 20px;
-            margin-bottom: 15px;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
 
         .feature-title {
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 10px;
-            color: #2c3e50;
+            color: #1a1f36;
         }
 
         .feature-desc {
             font-size: 14px;
-            color: #7f8c8d;
+            color: #4a5568;
             line-height: 1.6;
         }
 
@@ -157,17 +178,19 @@
 
         .phase-card {
             background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 30px;
+            border: 1px solid #e8ecf1;
+            border-radius: 16px;
+            padding: 35px;
             margin-bottom: 25px;
             position: relative;
             transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
         .phase-card:hover {
-            border-color: #2a5298;
-            box-shadow: 0 8px 20px rgba(42, 82, 152, 0.1);
+            border-color: #4A90E2;
+            box-shadow: 0 10px 25px rgba(74, 144, 226, 0.12);
+            transform: translateY(-2px);
         }
 
         .phase-header {
@@ -179,35 +202,36 @@
 
         .phase-title {
             font-size: 22px;
-            font-weight: 600;
-            color: #2c3e50;
+            font-weight: 500;
+            color: #1a1f36;
         }
 
         .phase-price {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
             color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
+            padding: 10px 24px;
+            border-radius: 24px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 500;
         }
 
         .phase-timeline {
-            color: #7f8c8d;
+            color: #718096;
             font-size: 14px;
             margin-bottom: 20px;
+            font-weight: 400;
         }
 
         .phase-content h4 {
-            color: #2c3e50;
+            color: #1a1f36;
             font-size: 16px;
             margin: 20px 0 10px;
-            font-weight: 600;
+            font-weight: 500;
         }
 
         .phase-content ul {
             margin-left: 20px;
-            color: #5a6c7d;
+            color: #4a5568;
         }
 
         .phase-content li {
@@ -224,22 +248,22 @@
         }
 
         th {
-            background: #f8f9fa;
-            padding: 12px;
+            background: #f7f9fc;
+            padding: 14px;
             text-align: left;
-            font-weight: 600;
-            color: #2c3e50;
-            border-bottom: 2px solid #e0e0e0;
+            font-weight: 500;
+            color: #1a1f36;
+            border-bottom: 2px solid #e8ecf1;
         }
 
         td {
-            padding: 12px;
-            border-bottom: 1px solid #f0f0f0;
-            color: #5a6c7d;
+            padding: 14px;
+            border-bottom: 1px solid #f0f4f8;
+            color: #4a5568;
         }
 
         tr:hover {
-            background: #f8f9fa;
+            background: #f7f9fc;
         }
 
         .text-right {
@@ -247,20 +271,20 @@
         }
 
         .total-row {
-            font-weight: 600;
-            background: #f8f9fa;
+            font-weight: 500;
+            background: #f7f9fc;
         }
 
         .total-row td {
-            color: #2c3e50;
-            border-top: 2px solid #e0e0e0;
+            color: #1a1f36;
+            border-top: 2px solid #e8ecf1;
         }
 
         /* Screenshot Placeholders */
         .screenshot-container {
-            background: #f8f9fa;
-            border: 2px dashed #d0d0d0;
-            border-radius: 12px;
+            background: white;
+            border: 1px solid #e8ecf1;
+            border-radius: 16px;
             padding: 40px;
             margin: 30px 0;
             text-align: center;
@@ -270,23 +294,25 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
         .screenshot-label {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #ff6b35;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            padding: 5px 15px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 500;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .screenshot-placeholder {
-            color: #95a5a6;
+            color: #718096;
             font-size: 14px;
             margin-top: 20px;
         }
@@ -299,8 +325,8 @@
 
         /* Checkmarks */
         .check {
-            color: #27ae60;
-            font-weight: bold;
+            color: #4A90E2;
+            font-weight: 500;
             margin-right: 8px;
         }
 
@@ -318,94 +344,117 @@
         }
 
         .timeline-marker {
-            width: 40px;
-            height: 40px;
-            background: #2a5298;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
             color: white;
-            border-radius: 50%;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            font-weight: 500;
             margin-right: 20px;
             flex-shrink: 0;
         }
 
         .timeline-content {
             flex: 1;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e8ecf1;
         }
 
         .timeline-title {
-            font-weight: 600;
-            color: #2c3e50;
+            font-weight: 500;
+            color: #1a1f36;
             margin-bottom: 5px;
         }
 
         .timeline-desc {
             font-size: 14px;
-            color: #7f8c8d;
+            color: #718096;
         }
 
         /* Investment Summary */
         .investment-card {
-            background: linear-gradient(135deg, #f8f9fa, #ffffff);
-            border: 2px solid #2a5298;
-            border-radius: 12px;
-            padding: 30px;
-            margin: 30px 0;
+            background: white;
+            border: 1px solid #4A90E2;
+            border-radius: 16px;
+            padding: 40px;
+            margin: 35px 0;
             text-align: center;
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.08);
         }
 
         .investment-total {
-            font-size: 36px;
-            font-weight: bold;
-            color: #2a5298;
-            margin: 20px 0;
+            font-size: 42px;
+            font-weight: 300;
+            color: #4A90E2;
+            margin: 25px 0;
+            letter-spacing: -0.5px;
         }
 
         .investment-subtitle {
-            color: #7f8c8d;
+            color: #718096;
             font-size: 14px;
+            font-weight: 400;
         }
 
         /* Call to Action */
         .cta {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
             color: white;
-            padding: 40px;
-            border-radius: 12px;
-            margin: 40px 0;
+            padding: 50px;
+            border-radius: 16px;
+            margin: 50px 0;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%);
         }
 
         .cta h3 {
             color: white;
-            font-size: 24px;
-            margin-bottom: 15px;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 300;
+            position: relative;
+            z-index: 1;
         }
 
         .cta p {
-            color: rgba(255,255,255,0.9);
-            margin-bottom: 25px;
+            color: rgba(255,255,255,0.95);
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
         }
 
         .cta-button {
             display: inline-block;
             background: white;
-            color: #2a5298;
-            padding: 12px 30px;
-            border-radius: 6px;
+            color: #4A90E2;
+            padding: 14px 36px;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 500;
             transition: all 0.3s;
+            position: relative;
+            z-index: 1;
         }
 
         .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
 
         /* Print Styles */
@@ -419,7 +468,7 @@
             
             .header {
                 page-break-after: avoid;
-                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+                background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%) !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -438,37 +487,37 @@
             
             /* Ensure all backgrounds print */
             .summary-box {
-                background: #f8f9fa !important;
+                background: white !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
             
             .phase-price {
-                background: linear-gradient(135deg, #2a5298, #1e3c72) !important;
+                background: linear-gradient(135deg, #4A90E2, #357ABD) !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
             
             .cta {
-                background: linear-gradient(135deg, #2a5298, #1e3c72) !important;
+                background: linear-gradient(135deg, #4A90E2, #357ABD) !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
             
             .feature-icon {
-                background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+                background: linear-gradient(135deg, #4A90E2, #357ABD) !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
             
             .success-metric {
-                background: #f1f8f4 !important;
+                background: white !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
             
             .timeline-marker {
-                background: #2a5298 !important;
+                background: linear-gradient(135deg, #4A90E2, #357ABD) !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -492,29 +541,31 @@
 
         .badge {
             display: inline-block;
-            padding: 4px 12px;
-            background: #e3f2fd;
-            color: #1976d2;
-            border-radius: 12px;
+            padding: 5px 14px;
+            background: linear-gradient(135deg, rgba(74,144,226,0.1), rgba(74,144,226,0.05));
+            color: #4A90E2;
+            border-radius: 16px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 500;
             margin-left: 10px;
+            border: 1px solid rgba(74,144,226,0.2);
         }
 
         .success-metric {
             display: flex;
             align-items: center;
-            padding: 15px;
-            background: #f1f8f4;
-            border-left: 3px solid #27ae60;
-            border-radius: 0 6px 6px 0;
-            margin: 10px 0;
+            padding: 18px;
+            background: white;
+            border-left: 3px solid #4A90E2;
+            border-radius: 8px;
+            margin: 12px 0;
+            border: 1px solid #e8ecf1;
         }
 
         .metric-icon {
             font-size: 24px;
             margin-right: 15px;
-            color: #27ae60;
+            color: #4A90E2;
         }
 
         .metric-text {
@@ -522,14 +573,14 @@
         }
 
         .metric-title {
-            font-weight: 600;
-            color: #2c3e50;
+            font-weight: 500;
+            color: #1a1f36;
             margin-bottom: 3px;
         }
 
         .metric-desc {
             font-size: 14px;
-            color: #7f8c8d;
+            color: #718096;
         }
     </style>
 </head>
@@ -537,12 +588,12 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div style="margin-bottom: 30px;">
-                <img src="../../avodah-assets/blue-logo.png" alt="Avodah Logo" style="height: 50px;">
+            <div style="margin-bottom: 10px;">
+                <img src="../../avodah-assets/blue-logo.png" alt="Avodah Logo" style="height: 150px;">
             </div>
             <h1>Digital Scale Integration System</h1>
             <div class="subtitle">Production Tracking Solution for UQSA Manufacturing</div>
-            <div class="date">Proposal Date: January 2025</div>
+            <div class="date">Proposal Date: September 2025</div>
         </div>
 
         <!-- Executive Summary -->
