@@ -249,7 +249,7 @@
 
         th {
             background: #f7f9fc;
-            padding: 14px;
+            padding: 10px;
             text-align: left;
             font-weight: 500;
             color: #1a1f36;
@@ -257,7 +257,7 @@
         }
 
         td {
-            padding: 14px;
+            padding: 10px;
             border-bottom: 1px solid #f0f4f8;
             color: #4a5568;
         }
@@ -285,16 +285,31 @@
             background: white;
             border: 1px solid #e8ecf1;
             border-radius: 16px;
-            padding: 40px;
-            margin: 30px 0;
+            padding: 30px;
+            margin: 20px 0;
             text-align: center;
             position: relative;
-            min-height: 300px;
+            min-height: 250px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .screenshot-container img {
+            max-width: 85% !important;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .screenshot-group {
+            page-break-inside: avoid;
+        }
+        
+        .screenshot-page-break {
+            page-break-after: always;
         }
 
         .screenshot-label {
@@ -656,69 +671,89 @@
         <section class="section">
             <h2>User Interface Design</h2>
             
-            <h3>Station Interface - Employee Login</h3>
-            <div class="screenshot-container">
-                <span class="screenshot-label">Mock Up</span>
-                <img src="../proposal-images/station-enter-employee.png" alt="Employee Login Screen" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
-                    Simple numeric keypad for quick employee ID entry. Large buttons designed for industrial environments.
+            <div class="screenshot-group">
+                <h3>Station Interface - Employee Login</h3>
+                <div class="screenshot-container">
+                    <span class="screenshot-label">Mock Up</span>
+                    <img src="../proposal-images/station-enter-employee.png" alt="Employee Login Screen">
+                    <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 13px; color: #5a6c7d;">
+                        Simple numeric keypad for quick employee ID entry. Large buttons designed for industrial environments.
+                    </div>
+                </div>
+
+                <h3>Station Interface - Part Number Entry</h3>
+                <div class="screenshot-container">
+                    <span class="screenshot-label">Mock Up</span>
+                    <img src="../proposal-images/station-enter-part.png" alt="Part Number Entry Screen">
+                    <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 13px; color: #5a6c7d;">
+                        Employees select their part number from a simple list. Shows both part number and description for easy identification.
+                    </div>
                 </div>
             </div>
+            
+            <div class="screenshot-page-break"></div>
 
-            <h3>Station Interface - Part Number Entry</h3>
-            <div class="screenshot-container">
-                <span class="screenshot-label">Mock Up</span>
-                <img src="../proposal-images/station-enter-part.png" alt="Part Number Entry Screen" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
-                    Employees select their part number from a simple list. Shows both part number and description for easy identification.
+            <div class="screenshot-group">
+                <h3>Station Interface - Active Production</h3>
+                <div class="screenshot-container">
+                    <span class="screenshot-label">Mock Up</span>
+                    <img src="../proposal-images/station-active.png" alt="Active Production Screen">
+                    <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 13px; color: #5a6c7d;">
+                        Real-time display showing current piece count, production rate (pieces/hour), and a large "Record Count" button. The interface automatically tracks weight changes and calculates metrics without employee intervention.
+                    </div>
                 </div>
             </div>
+            
+            <div class="screenshot-page-break"></div>
 
-            <h3>Station Interface - Active Production</h3>
-            <div class="screenshot-container">
-                <span class="screenshot-label">Mock Up</span>
-                <img src="../proposal-images/station-active.png" alt="Active Production Screen" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
-                    Real-time display showing current piece count, production rate (pieces/hour), and a large "Record Count" button. The interface automatically tracks weight changes and calculates metrics without employee intervention.
+            <div class="screenshot-group">
+                <h3>Management Dashboard - Overview</h3>
+                <div class="screenshot-container">
+                    <span class="screenshot-label">Mock Up</span>
+                    <img src="../proposal-images/dashboard-station-overview.png" alt="Dashboard Overview">
+                    <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 13px; color: #5a6c7d;">
+                        Color-coded overview of all 13 stations at a glance. Green indicates active production, yellow shows idle stations, and red highlights stations needing attention. Real-time updates every second.
+                    </div>
                 </div>
             </div>
+            
+            <div class="screenshot-page-break"></div>
 
-            <h3>Management Dashboard - Overview</h3>
-            <div class="screenshot-container">
-                <span class="screenshot-label">Mock Up</span>
-                <img src="../proposal-images/dashboard-station-overview.png" alt="Dashboard Overview" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
-                    Color-coded overview of all 13 stations at a glance. Green indicates active production, yellow shows idle stations, and red highlights stations needing attention. Real-time updates every second.
+            <div class="screenshot-group">
+                <h3>Management Dashboard - Station Details</h3>
+                <div class="screenshot-container">
+                    <span class="screenshot-label">Mock Up</span>
+                    <img src="../proposal-images/dashboard-station-detail.png" alt="Station Detail View">
+                    <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 13px; color: #5a6c7d;">
+                        Click any station to see detailed production graphs, hourly trends, and employee performance metrics. Export data directly to Excel for further analysis.
+                    </div>
                 </div>
             </div>
+            
+            <div class="screenshot-page-break"></div>
 
-            <h3>Management Dashboard - Station Details</h3>
-            <div class="screenshot-container">
-                <span class="screenshot-label">Mock Up</span>
-                <img src="../proposal-images/dashboard-station-detail.png" alt="Station Detail View" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
-                    Click any station to see detailed production graphs, hourly trends, and employee performance metrics. Export data directly to Excel for further analysis.
+            <div class="screenshot-group">
+                <h3>Admin Panel - Employee Management</h3>
+                <div class="screenshot-container">
+                    <span class="screenshot-label">Mock Up</span>
+                    <img src="../proposal-images/admin-employee-management.png" alt="Employee Management">
+                    <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 13px; color: #5a6c7d;">
+                        Simple interface to add and manage employee IDs. No complex setup required - just ID number and name for easy identification on reports.
+                    </div>
                 </div>
-            </div>
 
-            <h3>Admin Panel - Employee Management</h3>
-            <div class="screenshot-container">
-                <span class="screenshot-label">Mock Up</span>
-                <img src="../proposal-images/admin-employee-management.png" alt="Employee Management" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
-                    Simple interface to add and manage employee IDs. No complex setup required - just ID number and name for easy identification on reports.
-                </div>
-            </div>
-
-            <h3>Admin Panel - Parts Management</h3>
-            <div class="screenshot-container">
-                <span class="screenshot-label">Mock Up</span>
-                <img src="../proposal-images/admin-parts-management.png" alt="Parts Management" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 14px; color: #5a6c7d;">
-                    Maintain your parts list with support for both assembly and sorting operations. Set piece weights for accurate counting or use direct counting mode for pre-packaged items.
+                <h3>Admin Panel - Parts Management</h3>
+                <div class="screenshot-container">
+                    <span class="screenshot-label">Mock Up</span>
+                    <img src="../proposal-images/admin-parts-management.png" alt="Parts Management">
+                    <div class="screenshot-placeholder" style="margin-top: 15px; font-size: 13px; color: #5a6c7d;">
+                        Maintain your parts list with support for both assembly and sorting operations. Set piece weights for accurate counting or use direct counting mode for pre-packaged items.
+                    </div>
                 </div>
             </div>
         </section>
+
+        <div style="page-break-before: always;"></div>
 
         <!-- Implementation Phases -->
         <section class="section">
@@ -736,22 +771,30 @@
                     </div>
                     
                     <div class="phase-content">
-                        <h4>Deliverables:</h4>
-                        <ul>
-                            <li>Single station setup with touchscreen interface</li>
-                            <li>Employee login and part selection screens</li>
-                            <li>Live scale reading and pieces/hour display</li>
-                            <li>"Record Count" button functionality</li>
-                            <li>Basic dashboard showing single station metrics</li>
-                            <li>Data export capability</li>
-                        </ul>
+                        <h4>Investment Breakdown:</h4>
+                        <table style="margin: 15px 0; box-shadow: none;">
+                            <tbody>
+                                <tr>
+                                    <td><strong>Engineering</strong></td>
+                                    <td class="text-right">$10,000</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Hardware</strong></td>
+                                    <td class="text-right">$1,000</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>On-Site Support</strong></td>
+                                    <td class="text-right">$1,500</td>
+                                </tr>
+                            </tbody>
+                        </table>
                         
-                        <h4>Value Delivered:</h4>
+                        <h4>High-Level Results:</h4>
                         <ul>
-                            <li>Proof of concept with your most trusted employee</li>
-                            <li>Validation of Sterling 7600 scale integration</li>
-                            <li>Immediate production visibility for pilot station</li>
-                            <li>Foundation for full deployment</li>
+                            <li>✓ One fully operational station with touchscreen interface</li>
+                            <li>✓ Real-time scale integration and data capture</li>
+                            <li>✓ Basic management dashboard for production monitoring</li>
+                            <li>✓ Validated proof of concept ready for expansion</li>
                         </ul>
                     </div>
                 </div>
@@ -761,32 +804,37 @@
                     <div class="phase-header">
                         <div>
                             <div class="phase-title">Phase 2: Full 13-Station Deployment</div>
-                            <div class="phase-timeline">Timeline: 6-8 weeks after Phase 1 approval</div>
+                            <div class="phase-timeline">Timeline: 4-6 weeks after Phase 1 approval</div>
                         </div>
-                        <div class="phase-price">$27,500</div>
+                        <div class="phase-price">$17,500</div>
                     </div>
                     
                     <div class="phase-content">
-                        <h4>Deliverables:</h4>
-                        <ul>
-                            <li>Deployment to all 13 production stations</li>
-                            <li>Complete station hardware installation</li>
-                            <li>Dual-mode support (Assembly & Sorting workflows)</li>
-                            <li>Full dashboard with all stations</li>
-                            <li>Hourly production reports (as requested by Sue)</li>
-                            <li>Historical data tracking and storage</li>
-                            <li>Employee performance metrics</li>
-                            <li>Excel-compatible data export</li>
-                            <li>On-site training for all users</li>
-                        </ul>
+                        <h4>Investment Breakdown:</h4>
+                        <table style="margin: 15px 0; box-shadow: none;">
+                            <tbody>
+                                <tr>
+                                    <td><strong>Engineering</strong></td>
+                                    <td class="text-right">$11,500</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Hardware</strong></td>
+                                    <td class="text-right">$4,000</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>On-Site Support</strong></td>
+                                    <td class="text-right">$2,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
                         
-                        <h4>Value Delivered:</h4>
+                        <h4>High-Level Results:</h4>
                         <ul>
-                            <li>Complete elimination of paper tracking</li>
-                            <li>Real-time visibility across entire production floor</li>
-                            <li>Immediate issue detection (not next-day)</li>
-                            <li>Automated hourly reports for management</li>
-                            <li>Crystal freed from manual counting duties</li>
+                            <li>✓ All 13 stations fully operational</li>
+                            <li>✓ Complete dashboard with real-time monitoring</li>
+                            <li>✓ Automated reporting and data export capabilities</li>
+                            <li>✓ Full team training and system documentation</li>
+                            <li>✓ Elimination of manual paper tracking</li>
                         </ul>
                     </div>
                 </div>
@@ -795,118 +843,54 @@
                 <div class="phase-card">
                     <div class="phase-header">
                         <div>
-                            <div class="phase-title">Phase 3: Advanced Analytics & Customization</div>
-                            <div class="phase-timeline">Timeline: To be determined based on requirements</div>
+                            <div class="phase-title">Phase 3: Future Enhancements</div>
+                            <div class="phase-timeline">Timeline: Based on your business needs</div>
                         </div>
-                        <div class="phase-price">TBD</div>
+                        <div class="phase-price">Custom</div>
                     </div>
                     
                     <div class="phase-content">
                         <h4>Potential Enhancements:</h4>
                         <ul>
-                            <li>Advanced production analytics and trends</li>
-                            <li>Predictive alerts for production issues</li>
-                            <li>Quality control integration</li>
-                            <li>Scrap tracking and reporting</li>
+                            <li>Advanced analytics and predictive insights</li>
+                            <li>Quality control and scrap tracking</li>
+                            <li>Mobile supervisor applications</li>
                             <li>Custom KPI dashboards</li>
-                            <li>API integration with ERP systems</li>
-                            <li>Mobile app for supervisors</li>
-                            <li>Advanced employee productivity analytics</li>
+                            <li>Job overview and profitability reporting</li>
                         </ul>
                         
                         <p style="margin-top: 20px; font-style: italic;">
-                            Pricing to be scoped based on selected features
+                            We'll work with you to identify and prioritize future enhancements based on Phase 1 & 2 results
                         </p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Hardware Investment -->
+        <!-- Hardware Components -->
         <section class="section">
-            <h2>Hardware Investment</h2>
-            
-            <h3>Per Station Configuration</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Component</th>
-                        <th class="text-right">Cost</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>SmartiPi Touch Pro 3 Case</td>
-                        <td class="text-right">$39.99</td>
-                    </tr>
-                    <tr>
-                        <td>Raspberry Pi 4 (4GB)</td>
-                        <td class="text-right">$55.00</td>
-                    </tr>
-                    <tr>
-                        <td>7" Touch Display</td>
-                        <td class="text-right">$72.50</td>
-                    </tr>
-                    <tr>
-                        <td>MicroSD Card (32GB)</td>
-                        <td class="text-right">$10.00</td>
-                    </tr>
-                    <tr>
-                        <td>Power Supply</td>
-                        <td class="text-right">$12.00</td>
-                    </tr>
-                    <tr>
-                        <td>USB Protection Cable</td>
-                        <td class="text-right">$10.00</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td><strong>Total per Station</strong></td>
-                        <td class="text-right"><strong>$199.49</strong></td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>Full Deployment (13 Stations + Infrastructure)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                        <th class="text-right">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Complete Station Setups</td>
-                        <td>15 (includes 2 spares)</td>
-                        <td class="text-right">$2,992.35</td>
-                    </tr>
-                    <tr>
-                        <td>USB-Serial Adapters (Gearmo)</td>
-                        <td>16</td>
-                        <td class="text-right">$480.00</td>
-                    </tr>
-                    <tr>
-                        <td>Wall Mounts</td>
-                        <td>13</td>
-                        <td class="text-right">$260.00</td>
-                    </tr>
-                    <tr>
-                        <td>Network Infrastructure</td>
-                        <td>1</td>
-                        <td class="text-right">$500.00</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td colspan="2"><strong>Total Hardware Investment</strong></td>
-                        <td class="text-right"><strong>$4,232.35</strong></td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <p style="margin-top: 15px; font-size: 14px; font-style: italic;">
-                Note: Hardware can be purchased directly by UQSA or included in project pricing
+            <h2>Hardware Components</h2>
+            <p class="lead">
+                All hardware costs are included in the phase pricing above. We use industrial-grade components 
+                designed for reliability in manufacturing environments.
             </p>
+            
+            <div class="summary-box">
+                <strong>Station Hardware Includes:</strong>
+                <ul>
+                    <li>✓ Raspberry Pi 4 computing units</li>
+                    <li>✓ 7" industrial touchscreen displays</li>
+                    <li>✓ Protective cases and mounting hardware</li>
+                    <li>✓ USB-to-serial adapters for scale communication</li>
+                    <li>✓ Network infrastructure components</li>
+                </ul>
+                <p style="margin-top: 15px; font-size: 14px; font-style: italic;">
+                    Hardware procurement and configuration is managed by Avodah as part of the project delivery
+                </p>
+            </div>
         </section>
+
+        <div style="page-break-before: always;"></div>
 
         <!-- Success Metrics -->
         <section class="section">
@@ -921,18 +905,10 @@
             </div>
             
             <div class="success-metric">
-                <div class="metric-icon">👥</div>
-                <div class="metric-text">
-                    <div class="metric-title">Adoption</div>
-                    <div class="metric-desc">All stations actively using system within 2 weeks</div>
-                </div>
-            </div>
-            
-            <div class="success-metric">
                 <div class="metric-icon">⏱️</div>
                 <div class="metric-text">
                     <div class="metric-title">Time Savings</div>
-                    <div class="metric-desc">Crystal gains 4+ hours/day for quality tasks</div>
+                    <div class="metric-desc">Hourly and daily reports are generated on demand.</div>
                 </div>
             </div>
             
@@ -957,98 +933,107 @@
         <section class="section">
             <h2>Project Timeline</h2>
             
+            <p class="lead">
+                We anticipate completing the full implementation in <strong>6-10 weeks</strong>, 
+                depending on site coordination and hardware availability.
+            </p>
+            
             <div class="timeline">
                 <div class="timeline-item">
                     <div class="timeline-marker">1</div>
                     <div class="timeline-content">
-                        <div class="timeline-title">Weeks 1-2: Phase 1 Development</div>
-                        <div class="timeline-desc">Build core station software and basic dashboard</div>
+                        <div class="timeline-title">Phase 1: Pilot Station</div>
+                        <div class="timeline-desc">Development, installation, and validation of single station with dashboard</div>
                     </div>
                 </div>
                 
                 <div class="timeline-item">
                     <div class="timeline-marker">2</div>
                     <div class="timeline-content">
-                        <div class="timeline-title">Week 3: Phase 1 Installation & Testing</div>
-                        <div class="timeline-desc">Deploy pilot station and validate scale integration</div>
+                        <div class="timeline-title">Phase 2: Full Deployment</div>
+                        <div class="timeline-desc">Scale to all 13 stations with complete system functionality</div>
                     </div>
                 </div>
                 
                 <div class="timeline-item">
                     <div class="timeline-marker">3</div>
                     <div class="timeline-content">
-                        <div class="timeline-title">Week 4: Phase 1 Training & Go-Live</div>
-                        <div class="timeline-desc">Train pilot users and begin production use</div>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-marker">4</div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">Weeks 6-9: Phase 2 Development</div>
-                        <div class="timeline-desc">Enhance system for full deployment</div>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-marker">5</div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">Weeks 10-11: Phase 2 Installation</div>
-                        <div class="timeline-desc">Deploy all 13 stations</div>
-                    </div>
-                </div>
-                
-                <div class="timeline-item">
-                    <div class="timeline-marker">6</div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">Week 12: Phase 2 Training & Go-Live</div>
-                        <div class="timeline-desc">Train all users and full system launch</div>
+                        <div class="timeline-title">Go-Live & Training</div>
+                        <div class="timeline-desc">System launch with comprehensive team training and support</div>
                     </div>
                 </div>
             </div>
+            
+            <p style="margin-top: 20px; font-size: 14px; color: #718096;">
+                Timeline will be finalized based on your production schedule and hardware lead times
+            </p>
         </section>
 
-        <!-- Investment Summary -->
+        <div style="page-break-before: always;"></div>
+
+        <!-- Pricing Summary -->
         <section class="section">
-            <h2>Investment Summary</h2>
+            <h2>Pricing Summary</h2>
             
             <div class="investment-card">
-                <table style="margin: 0 auto; box-shadow: none;">
+                <table style="margin: 0 auto; box-shadow: none; width: 100%;">
                     <thead>
                         <tr>
                             <th>Phase</th>
-                            <th>Description</th>
-                            <th>Timeline</th>
-                            <th class="text-right">Investment</th>
+                            <th class="text-right">Engineering</th>
+                            <th class="text-right">Hardware</th>
+                            <th class="text-right">On-Site</th>
+                            <th class="text-right">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Hardware</td>
-                            <td>15 Complete Stations</td>
-                            <td>Immediate</td>
-                            <td class="text-right">$4,232.35</td>
+                            <td><strong>Phase 1</strong><br><span style="font-size: 12px; color: #718096;">Pilot Station</span></td>
+                            <td class="text-right">$10,000</td>
+                            <td class="text-right">$1,000</td>
+                            <td class="text-right">$1,500</td>
+                            <td class="text-right"><strong>$12,500</strong></td>
                         </tr>
                         <tr>
-                            <td>Phase 1</td>
-                            <td>Pilot Station & Dashboard</td>
-                            <td>3-4 weeks</td>
-                            <td class="text-right">$12,500.00</td>
+                            <td><strong>Phase 2</strong><br><span style="font-size: 12px; color: #718096;">Full Deployment</span></td>
+                            <td class="text-right">$11,500</td>
+                            <td class="text-right">$4,000</td>
+                            <td class="text-right">$2,000</td>
+                            <td class="text-right"><strong>$17,500</strong></td>
                         </tr>
-                        <tr>
-                            <td>Phase 2</td>
-                            <td>Full 13-Station System</td>
-                            <td>6-8 weeks</td>
-                            <td class="text-right">$27,500.00</td>
+                        <tr class="total-row">
+                            <td><strong>Total</strong></td>
+                            <td class="text-right"><strong>$21,500</strong></td>
+                            <td class="text-right"><strong>$5,000</strong></td>
+                            <td class="text-right"><strong>$3,500</strong></td>
+                            <td class="text-right"><strong>$30,000</strong></td>
                         </tr>
                     </tbody>
                 </table>
                 
-                <div class="investment-total">$44,232.35</div>
-                <div class="investment-subtitle">Total Initial Investment • 3 Month Implementation</div>
+                <div class="investment-total">$30,000</div>
+                <div class="investment-subtitle">Total Project Investment</div>
                 
-                <p style="margin-top: 20px; font-size: 14px;">
-                    Phase 3 pricing to be determined based on requirements
+                <div style="margin-top: 15px; padding: 15px; background: white; border: 1px solid #e8ecf1; border-radius: 12px;">
+                    <h4 style="margin-bottom: 10px; color: #1a1f36; font-weight: 500;">Payment Terms</h4>
+                    <div style="space-y: 10px;">
+                        <div style="padding: 10px 0; border-bottom: 1px solid #f0f4f8;">
+                            <div style="font-weight: 500; color: #1a1f36; margin-bottom: 4px;">Phase 1 Start</div>
+                            <div style="color: #4a5568;">$6,250 <span style="color: #718096; font-size: 13px;">(50% of Phase 1)</span></div>
+                        </div>
+                        <div style="padding: 10px 0; border-bottom: 1px solid #f0f4f8;">
+                            <div style="font-weight: 500; color: #1a1f36; margin-bottom: 4px;">Phase 1 Completion / Phase 2 Start</div>
+                            <div style="color: #4a5568;">$15,000 <span style="color: #718096; font-size: 13px;">(50% of Phase 1 + 50% of Phase 2)</span></div>
+                        </div>
+                        <div style="padding: 10px 0;">
+                            <div style="font-weight: 500; color: #1a1f36; margin-bottom: 4px;">Phase 2 Completion</div>
+                            <div style="color: #4a5568;">$8,750 <span style="color: #718096; font-size: 13px;">(50% of Phase 2)</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p style="margin-top: 10px; font-size: 14px;">
+                    Future enhancements to be scoped based on your specific needs
                 </p>
             </div>
         </section>
@@ -1065,12 +1050,12 @@
                 <li>Minimize disruption to current operations</li>
             </ul>
 
-            <h3>Addresses Your Specific Needs</h3>
+            <h3>Key Benefits for Your Team</h3>
             <ul>
-                <li><strong>For Kimmy:</strong> Real-time visibility into production issues</li>
-                <li><strong>For Crystal:</strong> Eliminate manual counting burden</li>
-                <li><strong>For Sue:</strong> Automated hourly reports in Excel-friendly format</li>
-                <li><strong>For Employees:</strong> Simple interface with minimal workflow disruption</li>
+                <li><strong>Management:</strong> Real-time visibility into production issues</li>
+                <li><strong>Quality Control:</strong> Eliminate manual counting burden</li>
+                <li><strong>Reporting:</strong> Automated hourly reports in Excel-friendly format</li>
+                <li><strong>Production Floor:</strong> Simple interface with minimal workflow disruption</li>
             </ul>
 
             <h3>Based on Proven Technology</h3>
@@ -1082,26 +1067,7 @@
             </ul>
         </section>
 
-        <!-- Our Commitment -->
-        <section class="section">
-            <h2>Our Commitment</h2>
-            
-            <div class="summary-box">
-                <p>
-                    We understand that a previous vendor told you this "couldn't be done." We respectfully disagree. 
-                    Scale integration is well-established technology, and we've successfully implemented similar systems.
-                </p>
-                <p style="margin-top: 15px;">
-                    <strong>Our approach prioritizes:</strong>
-                </p>
-                <ul>
-                    <li>Minimal disruption to current workflows</li>
-                    <li>Maximum visibility into production metrics</li>
-                    <li>Proven technology with reliable components</li>
-                    <li>Your success through phased, low-risk implementation</li>
-                </ul>
-            </div>
-        </section>
+        <div style="page-break-before: always;"></div>
 
         <!-- Call to Action -->
         <div class="cta">
@@ -1109,13 +1075,6 @@
             <p>
                 Let's eliminate your paperwork burden and give you the real-time visibility you need to optimize production.
             </p>
-            <p>
-                <strong>We're ready to begin immediately upon approval.</strong>
-            </p>
-            <div style="margin-top: 30px;">
-                <span style="display: block; margin-bottom: 10px;">Questions? Contact your implementation team:</span>
-                <strong style="font-size: 18px;">Avodah Development Team</strong>
-            </div>
         </div>
 
         <!-- Footer -->
