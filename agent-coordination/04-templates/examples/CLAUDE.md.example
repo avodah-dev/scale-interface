@@ -1,0 +1,84 @@
+# [Project Name] - Central Navigation & Agent Instructions
+
+**Purpose**: Central navigation hub for working with the [project] codebase.
+
+## Working Preferences
+
+- **Testing approach**: [User maintains environment / Dev server / etc.]
+- **Documentation first**: Check documentation before diving into code
+- **Reference pattern**: Use "See File.ts:45" instead of duplicating code
+- **Context preservation**: Keep documentation under 100 lines
+
+## 🗺️ Navigation by Problem Type
+
+### "I have a bug in [area]"
+1. **Start**: `src/[relevant-module]/_[module]-info.md`
+2. **Tests**: `tests/[module]/`
+3. **Related**: `docs/troubleshooting.md`
+
+### "I need to add a new feature"
+1. **Start**: Check `mission-tracker/current-missions.md`
+2. **Architecture**: `docs/architecture/`
+3. **Patterns**: Look for similar features in `src/`
+4. **Types**: `src/types/`
+
+### "I need to modify data structures"
+1. **Start**: `src/types/`
+2. **Validation**: `src/validators/`
+3. **Migration**: `docs/migration-guide.md`
+
+### "I have a UI/display issue"
+1. **Components**: `src/components/_components-info.md`
+2. **Styles**: `src/styles/`
+3. **Framework docs**: [Link to UI framework]
+
+### "I need to understand the business logic"
+1. **Start**: `docs/business-context/`
+2. **Implementation**: `src/core/`
+3. **Tests**: `tests/core/` for examples
+
+## 📁 Key Documentation Files
+
+### Navigation Aids
+- `src/**/_*-info.md` - Folder-level navigation (50-100 lines each)
+- `docs/architecture.md` - System overview
+- `mission-tracker/README.md` - How we track work
+
+### Quick Commands
+```bash
+# Navigation
+cd src/core           # Core business logic
+cd src/components     # UI components
+cd mission-tracker    # Current work
+
+# Finding documentation
+find . -name "_*-info.md"  # All info files
+```
+
+## 🚀 Session Patterns
+
+### Starting a Session
+1. State your problem/goal clearly
+2. I'll check relevant documentation first
+3. I'll ask clarifying questions if needed
+4. We'll agree on approach before implementing
+
+### During Development
+- You run tests and provide feedback
+- I make targeted changes
+- We verify against acceptance criteria
+
+### Ending a Session
+- Review if documentation needs updates
+- Update mission status if applicable
+- Note any follow-up work needed
+
+## 📚 External Resources
+
+- **Framework**: [Your framework docs]
+- **Language**: [Language specific docs]
+- **Tools**: [Tool specific docs]
+
+---
+
+**Remember**: Start here for navigation. Use problem-type routing to find relevant documentation before diving into code.

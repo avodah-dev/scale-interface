@@ -1,8 +1,30 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Navigation and coordination guide for AI agents working on the Scale Interface System.
 
-## Important Development Guidelines
+## Project Mission
+
+**Building a 13-station production monitoring system for a sorting and assembly warehouse**
+
+The system enables real-time tracking of employee productivity through Sterling 7600 industrial scales, with touchscreen interfaces at each station and a central dashboard for supervisors to oversee production metrics.
+
+## Repository Structure
+
+### First-Level Folders
+
+- **`agent-coordination/`** - Framework and patterns for human-AI collaboration
+- **`mission-tracker/`** - Task management and work coordination system  
+- **`project-management/`** - Documentation, hardware specs, proposals, and research
+- **`src/`** - TypeScript implementation of scale communication system
+
+### Key Project Files
+
+- **`config.json`** - System configuration for serial communication and logging
+- **`package.json`** - Node.js dependencies and scripts
+- **`tsconfig.json`** - TypeScript compiler configuration
+- **`biome.json`** - Code formatting and linting rules
+
+## Development Guidelines
 
 **ALWAYS run `pnpm run check` after making any code changes** to ensure:
 - Code passes all linting rules
@@ -11,23 +33,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 If `pnpm run check` fails, run `pnpm run check:fix` to auto-fix issues, then verify the changes.
 
-## Project Documentation Structure
+## Quick Start Navigation
 
-- **project-overview.md** - Complete system requirements, architecture, and end-to-end specifications for the 13-station scale interface system
-- **game-plan.md** - Phased development approach with current focus on console testing for proposal validation
-- **scale-manual.md** - Sterling 7600 technical specifications, RS-232 protocol, commands, and response formats
-- **tool-inventory.md** - Available hardware tools and development equipment for current testing phase
-- **CLAUDE.md** - This file - development guidance and project context for Claude Code
-
-## Project Overview
-
-This is a scale-based workstation system project for industrial manufacturing environments. The goal is to create 13 identical stations where employees can:
-
-- Sign in with employee ID on touchscreen devices
-- Enter project/part IDs to activate stations
-- Monitor real-time metrics from Sterling 7600 industrial scales via RS-232 serial communication
-- Display metrics: total counts today, counts this hour, expected per hour, average per hour
-- Upload data to cloud database with offline resilience
+| Need | Go To | Purpose |
+|------|-------|----------|
+| Current tasks | `mission-tracker/` | Active work items and priorities |
+| Hardware info | `project-management/hardware/` | Equipment specifications |
+| Code implementation | `src/` | TypeScript scale interface |
+| AI coordination | `agent-coordination/` | Collaboration patterns |
+| Project docs | `project-management/docs/` | Architecture and decisions |
 
 ## Development Phases
 
@@ -334,3 +348,24 @@ grep "scale_reading" logs/scale-data-*.log | tail -20
 - Cross-platform deployment (Windows/Linux)
 - Multi-station coordination and cloud integration
 - Production deployment for 13-station system
+
+## Navigation Patterns
+
+### For Implementation Work
+1. Check `mission-tracker/` for current tasks
+2. Review relevant `_info.md` files in target folders
+3. Make changes following existing patterns
+4. Run `pnpm run check` after code changes
+5. Update mission status when complete
+
+### For Research & Understanding
+1. Start with folder-level `_info.md` files
+2. Follow cross-references to related components
+3. Check `project-management/` for specifications
+4. Review `agent-coordination/` for collaboration patterns
+
+### For Hardware & Testing
+1. See `project-management/hardware/` for equipment specs
+2. Check `src/controllers/` for mock vs real controllers
+3. Use `config.json` to switch between modes
+4. Review test results in `project-management/pre-contract-research/`

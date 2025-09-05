@@ -1,0 +1,220 @@
+# Quickstart - Copy These Files
+
+## Instant Setup
+
+Copy these three files to your project root to get started immediately:
+
+1. `CLAUDE.md` - Central navigation hub
+2. `mission-tracker/` folder - Work tracking
+3. Your first `_info.md` file - Navigation example
+
+## File 1: CLAUDE.md (copy to project root)
+
+```markdown
+# [Your Project] - Agent Navigation Hub
+
+<!-- DNA: This file will evolve from simple navigation (Level 2) to orchestration hub (Level 4) -->
+<!-- Philosophy: Human-Agent Coordination - Shared navigation for both humans and agents -->
+<!-- Composable: Works alone for navigation, combines with missions & docs for 5x effectiveness -->
+
+## 🗺️ Navigation by Problem Type
+<!-- DNA Level 1-2: Basic navigation - Active immediately -->
+
+### "I need to understand the codebase"
+1. **Start**: Check documentation in `docs/` or `README.md`
+2. **Architecture**: Look for architecture docs or diagrams
+3. **Types**: Find type definitions (often `src/types/` or similar)
+
+### "I have a bug"
+1. **Start**: Identify the affected module
+2. **Tests**: Check test files for expected behavior
+3. **Fix**: Make minimal change to resolve
+
+### "I need to add a feature"
+1. **Start**: `mission-tracker/current-missions.md`
+2. **Similar code**: Find existing patterns
+3. **Plan**: Create mission spec before implementing
+
+<!-- DNA Level 3: Mission coordination - Activates with complexity -->
+## Mission Coordination
+<!-- Composable: Links to documentation for context packages -->
+- Current missions: `mission-tracker/current-missions.md`
+- Mission specs include documentation links
+- Completed missions update navigation paths
+
+## Session Patterns
+<!-- DNA Level 2-3: Working agreements -->
+
+### Starting Work
+- State your goal clearly
+- I'll check documentation first
+- We'll agree on approach
+
+### During Work
+- You test, I implement
+- Small, reviewable changes
+- Reference over duplication
+
+### Ending Work
+- Update mission status
+- Note follow-up items
+
+<!-- DNA Level 4-5: Multi-agent orchestration - Dormant until needed -->
+## Agent Coordination (Future)
+<!-- Will activate when working with multiple agents -->
+- Agent specializations
+- Handoff protocols
+- Context packages
+
+<!-- DNA Level 3-4: Context optimization -->
+## Common Commands
+- Test: [your test command]
+- Build: [your build command]
+- Lint: [your lint command]
+```
+
+## File 2: mission-tracker folder
+
+Create this structure:
+```
+mission-tracker/
+├── README.md
+├── current-missions.md
+├── ToDo/
+│   └── (your first mission).md
+├── InProgress/
+└── Complete/
+```
+
+### mission-tracker/README.md
+```markdown
+# Mission Tracker
+
+Simple work tracking for human-agent coordination.
+
+## Rules
+1. Work starts in ToDo/
+2. Move to InProgress/ when starting
+3. Move to Complete/ when done
+
+## Creating a Mission
+Each mission needs:
+- Clear objective
+- Acceptance criteria
+- Affected files (if known)
+```
+
+### mission-tracker/current-missions.md
+```markdown
+# Current Missions
+
+## Next Up
+1. Add navigation documentation - `ToDo/add-navigation.md`
+
+## In Progress
+(none)
+
+## Recently Completed
+(none)
+```
+
+### mission-tracker/ToDo/add-navigation.md
+```markdown
+# Mission: Add Navigation Documentation
+
+## Objective
+Create _info.md files for main code folders
+
+## Acceptance Criteria
+- [ ] Identify top 3 most-used folders
+- [ ] Create _info.md for each
+- [ ] Update CLAUDE.md with references
+
+## Approach
+1. Find high-traffic folders
+2. Document "Which file do I need?"
+3. Keep under 100 lines
+```
+
+## File 3: Your First Info File
+
+Pick your most important folder and add `_[folder]-info.md`:
+
+```markdown
+# [Folder Name] - Quick Reference
+
+**Purpose**: [One line description]
+
+## Which File Do I Need?
+
+| If you need to... | Use this file | Why |
+|-------------------|---------------|-----|
+| [Common task 1] | `file1.ext` | [Brief reason] |
+| [Common task 2] | `file2.ext` | [Brief reason] |
+
+## File Breakdown
+
+### `main-file.ext` - [Role]
+- **Purpose**: [What it does]
+- **Key functions**: [Important parts]
+- **See**: main-file.ext:45-60
+
+### `helper-file.ext` - [Role]  
+- **Purpose**: [What it provides]
+- **Used by**: [What uses it]
+- **See**: helper-file.ext:12-34
+
+## Common Tasks
+
+**[Frequent question]**: See [file:lines]
+**[Another question]**: Check [file:lines]
+```
+
+## What Happens Next
+
+With these three files:
+
+1. **Agents can navigate** using CLAUDE.md
+2. **Work is trackable** via mission-tracker
+3. **Code is discoverable** through info files
+
+## Growing from Here
+
+### After a Week
+- Add more _info.md files as needed
+- Create more missions
+- Refine CLAUDE.md navigation
+
+### After a Month  
+- Consider agent ramps for specialized work
+- Add templates if patterns emerge
+- Archive completed missions
+
+### Signs of Success
+- Agents find files quickly
+- Less "where is X?" questions
+- Missions complete predictably
+- Documentation stays current
+
+## Using the AI Initialization
+
+Once these files exist, use the initialization prompt:
+```
+"I've added CLAUDE.md and mission-tracker to my project. 
+Please assess the current state and suggest improvements 
+following the Agentic Engineering Coordination patterns."
+```
+
+The AI will:
+- Recognize the patterns
+- Assess maturity
+- Suggest next improvements
+- Help implement them
+
+## Remember
+
+- Start simple
+- Add complexity only when needed
+- Navigation > Documentation
+- References > Duplication
+- 100 lines max per doc

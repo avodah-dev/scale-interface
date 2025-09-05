@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UQSA Station Interface - 7" Display</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            /* 7" display aspect ratio simulation */
+            max-width: 1280px;
+            max-height: 720px;
+            margin: 0 auto;
+            border: 2px solid #333;
+        }
+
+        .screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            height: 100%;
+        }
+
+        .login-screen.active {
+            display: flex;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .company-logo {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .login-prompt {
+            font-size: 24px;
+            opacity: 0.9;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .step-dot.active {
+            background: rgba(255,255,255,0.8);
+        }
+
+        .pin-display {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 20px;
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 20px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 10px;
+        }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        .numpad button {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            font-size: 28px;
+            padding: 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .numpad button:active {
+            background: rgba(255,255,255,0.3);
+            transform: scale(0.95);
+        }
+
+        .numpad .clear-btn {
+            background: rgba(231, 76, 60, 0.7);
+        }
+
+        .numpad .enter-btn {
+            background: rgba(46, 204, 113, 0.7);
+        }
+
+        /* Setup Screen */
+        .setup-screen {
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            height: 100%;
+        }
+
+        .setup-screen.active {
+            display: flex;
+        }
+
+        .setup-header {
+            margin-bottom: 20px;
+        }
+
+        .employee-info {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .part-prompt {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .part-display {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 20px;
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 20px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Active Station Screen */
+        .active-screen {
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            height: 100%;
+        }
+
+        .active-screen.active {
+            display: flex;
+        }
+
+        .station-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .station-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .station-number {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .employee-name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .part-info {
+            text-align: right;
+        }
+
+        .part-label {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .part-number {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .metrics-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .metric-box {
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .metric-label {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metric-value {
+            font-size: 64px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .metric-unit {
+            font-size: 18px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .current-pieces {
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        .pieces-per-hour {
+            background: rgba(46, 204, 113, 0.2);
+        }
+
+        .actions-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 25px;
+            font-size: 24px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .record-btn {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .record-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            flex: 0.3;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Employee ID Screen -->
+    <div class="screen login-screen active" id="employeeScreen">
+        <div class="login-header">
+            <div class="company-logo">UQSA Manufacturing</div>
+            <div class="step-indicator">
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+            </div>
+            <div class="login-prompt">Enter Your Employee ID</div>
+        </div>
+        <div class="pin-display" id="employeeDisplay"></div>
+        <div class="numpad">
+            <button onclick="addDigit('1')">1</button>
+            <button onclick="addDigit('2')">2</button>
+            <button onclick="addDigit('3')">3</button>
+            <button onclick="addDigit('4')">4</button>
+            <button onclick="addDigit('5')">5</button>
+            <button onclick="addDigit('6')">6</button>
+            <button onclick="addDigit('7')">7</button>
+            <button onclick="addDigit('8')">8</button>
+            <button onclick="addDigit('9')">9</button>
+            <button class="clear-btn" onclick="clearEmployee()">Clear</button>
+            <button onclick="addDigit('0')">0</button>
+            <button class="enter-btn" onclick="submitEmployee()">Enter</button>
+        </div>
+    </div>
+
+    <!-- Part Number Screen -->
+    <div class="screen setup-screen" id="partScreen">
+        <div class="setup-header">
+            <div class="step-indicator">
+                <div class="step-dot"></div>
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+            </div>
+            <div class="employee-info" id="employeeInfo">Employee #1234</div>
+            <div class="part-prompt">Enter Part Number</div>
+        </div>
+        <div class="part-display" id="partDisplay"></div>
+        <div class="numpad">
+            <button onclick="addPart('1')">1</button>
+            <button onclick="addPart('2')">2</button>
+            <button onclick="addPart('3')">3</button>
+            <button onclick="addPart('4')">4</button>
+            <button onclick="addPart('5')">5</button>
+            <button onclick="addPart('6')">6</button>
+            <button onclick="addPart('7')">7</button>
+            <button onclick="addPart('8')">8</button>
+            <button onclick="addPart('9')">9</button>
+            <button class="clear-btn" onclick="clearPart()">Clear</button>
+            <button onclick="addPart('0')">0</button>
+            <button class="enter-btn" onclick="startWork()">Start</button>
+        </div>
+    </div>
+
+    <!-- Active Station Screen -->
+    <div class="screen active-screen" id="activeScreen">
+        <div class="status-indicator"></div>
+        <div class="step-indicator" style="padding: 10px;">
+            <div class="step-dot"></div>
+            <div class="step-dot"></div>
+            <div class="step-dot active"></div>
+        </div>
+        <div class="station-header">
+            <div class="station-info">
+                <div class="station-number">Station 5</div>
+                <div class="employee-name" id="activeEmployeeName">Employee #1234</div>
+            </div>
+            <div class="part-info">
+                <div class="part-label">Part Number</div>
+                <div class="part-number" id="activePartNumber">78542</div>
+            </div>
+        </div>
+        
+        <div class="metrics-container">
+            <div class="metric-box current-pieces">
+                <div class="metric-label">Current Scale Reading</div>
+                <div class="metric-value" id="currentPieces">150</div>
+                <div class="metric-unit">pieces</div>
+            </div>
+            
+            <div class="metric-box pieces-per-hour">
+                <div class="metric-label">Production Rate</div>
+                <div class="metric-value" id="piecesPerHour">1,050</div>
+                <div class="metric-unit">pieces/hour</div>
+            </div>
+        </div>
+        
+        <div class="actions-container">
+            <button class="action-btn logout-btn" onclick="logout()">Logout</button>
+            <button class="action-btn record-btn" onclick="recordCount()">Record Count</button>
+        </div>
+    </div>
+
+    <script>
+        let employeeId = '';
+        let partNumber = '';
+        let currentScreen = 'employee';
+        
+        // Simulate scale readings
+        setInterval(() => {
+            if (currentScreen === 'active') {
+                // Update current pieces count
+                const currentVal = parseInt(document.getElementById('currentPieces').innerText);
+                
+                // Add random amount between 5 and 10
+                const increment = Math.floor(Math.random() * 6) + 5; // Random between 5-10
+                let newVal = currentVal + increment;
+                
+                // Reset if over 250
+                if (newVal > 250) {
+                    newVal = 150;
+                }
+                
+                document.getElementById('currentPieces').innerText = newVal;
+                
+                // Update pieces per hour - random between 1000 and 1100
+                const pph = Math.floor(Math.random() * 101) + 1000; // Random between 1000-1100
+                document.getElementById('piecesPerHour').innerText = pph.toLocaleString();
+            }
+        }, 5000); // Update every 5 seconds
+        
+        function addDigit(digit) {
+            employeeId += digit;
+            document.getElementById('employeeDisplay').innerText = employeeId;
+        }
+        
+        function clearEmployee() {
+            employeeId = '';
+            document.getElementById('employeeDisplay').innerText = '';
+        }
+        
+        function submitEmployee() {
+            if (employeeId.length > 0) {
+                // Update the employee info on the next screen
+                document.getElementById('employeeInfo').innerText = 'Employee #' + employeeId;
+                document.getElementById('activeEmployeeName').innerText = 'Employee #' + employeeId;
+                
+                // Move to part number screen
+                document.getElementById('employeeScreen').classList.remove('active');
+                document.getElementById('partScreen').classList.add('active');
+                currentScreen = 'part';
+            }
+        }
+        
+        function addPart(digit) {
+            partNumber += digit;
+            document.getElementById('partDisplay').innerText = partNumber;
+        }
+        
+        function clearPart() {
+            partNumber = '';
+            document.getElementById('partDisplay').innerText = '';
+        }
+        
+        function startWork() {
+            if (partNumber.length > 0) {
+                // Update part number on active screen
+                document.getElementById('activePartNumber').innerText = partNumber;
+                
+                // Move to active screen
+                document.getElementById('partScreen').classList.remove('active');
+                document.getElementById('activeScreen').classList.add('active');
+                currentScreen = 'active';
+            }
+        }
+        
+        function recordCount() {
+            const btn = event.target;
+            btn.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+            btn.innerText = 'RECORDED!';
+            setTimeout(() => {
+                btn.innerText = 'Record Count';
+            }, 1500);
+        }
+        
+        function logout() {
+            // Reset all data
+            employeeId = '';
+            partNumber = '';
+            document.getElementById('employeeDisplay').innerText = '';
+            document.getElementById('partDisplay').innerText = '';
+            
+            // Go back to employee screen
+            document.getElementById('activeScreen').classList.remove('active');
+            document.getElementById('employeeScreen').classList.add('active');
+            currentScreen = 'employee';
+        }
+    </script>
+</body>
+</html>

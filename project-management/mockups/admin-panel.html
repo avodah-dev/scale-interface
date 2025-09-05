@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UQSA Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 30px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: #7f8c8d;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .tab:hover {
+            color: #2a5298;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #5a6c7d;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #2a5298;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e3c72;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #5a6c7d;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .table {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .table thead {
+            background: #f8f9fa;
+        }
+
+        .table th {
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #5a6c7d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            padding: 12px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 5px 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #5a6c7d;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: #2a5298;
+            color: #2a5298;
+        }
+
+        .action-btn.delete {
+            color: #e74c3c;
+            border-color: #fee;
+        }
+
+        .action-btn.delete:hover {
+            background: #fee;
+            border-color: #e74c3c;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .add-form {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .add-form.active {
+            display: block;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #95a5a6;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #7f8c8d;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">UQSA Admin Panel</div>
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="window.location.href='dashboard.html'">← Back to Dashboard</button>
+                <button class="nav-btn">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('employees')">Employees</button>
+            <button class="tab" onclick="switchTab('parts')">Parts</button>
+        </div>
+
+        <!-- Employees Tab -->
+        <div id="employees-tab" class="tab-content active">
+            <div class="section">
+                <div class="success-message" id="employee-success">
+                    ✓ Employee added successfully
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title">Employee Management</h2>
+                    <button class="add-btn" onclick="toggleEmployeeForm()">+ Add Employee</button>
+                </div>
+
+                <!-- Add Employee Form -->
+                <div class="add-form" id="employee-form">
+                    <div class="form-header">
+                        <h3 class="form-title">Add New Employee</h3>
+                        <button class="close-btn" onclick="toggleEmployeeForm()">&times;</button>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Employee Number</label>
+                            <input type="text" id="emp-number" placeholder="1234">
+                        </div>
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" id="emp-firstname" placeholder="Jake">
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" id="emp-lastname" placeholder="Wilson">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="addEmployee()">Save Employee</button>
+                        <button class="btn btn-secondary" onclick="toggleEmployeeForm()">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Employee List -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Employee Number</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employee-list">
+                        <tr>
+                            <td>1234</td>
+                            <td>Jake</td>
+                            <td>Wilson</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn">Edit</button>
+                                    <button class="action-btn delete">Remove</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5678</td>
+                            <td>Crystal</td>
+                            <td>Martinez</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn">Edit</button>
+                                    <button class="action-btn delete">Remove</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>9012</td>
+                            <td>Jenny</td>
+                            <td>Thompson</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn">Edit</button>
+                                    <button class="action-btn delete">Remove</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Parts Tab -->
+        <div id="parts-tab" class="tab-content">
+            <div class="section">
+                <div class="success-message" id="part-success">
+                    ✓ Part added successfully
+                </div>
+
+                <div class="section-header">
+                    <h2 class="section-title">Part Configuration</h2>
+                    <button class="add-btn" onclick="togglePartForm()">+ Add Part</button>
+                </div>
+
+                <!-- Add Part Form -->
+                <div class="add-form" id="part-form">
+                    <div class="form-header">
+                        <h3 class="form-title">Add New Part</h3>
+                        <button class="close-btn" onclick="togglePartForm()">&times;</button>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Part Number</label>
+                            <input type="text" id="part-number" placeholder="78542">
+                        </div>
+                        <div class="form-group">
+                            <label>Target Pieces Per Hour</label>
+                            <input type="number" id="part-target" placeholder="1800">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="addPart()">Save Part</button>
+                        <button class="btn btn-secondary" onclick="togglePartForm()">Cancel</button>
+                    </div>
+                </div>
+
+                <!-- Parts List -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Part Number</th>
+                            <th>Target PPH</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="part-list">
+                        <tr>
+                            <td>78542</td>
+                            <td>1,800</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn">Edit</button>
+                                    <button class="action-btn delete">Remove</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>45123</td>
+                            <td>2,200</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn">Edit</button>
+                                    <button class="action-btn delete">Remove</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>67890</td>
+                            <td>1,500</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn">Edit</button>
+                                    <button class="action-btn delete">Remove</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>12345</td>
+                            <td>1,950</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn">Edit</button>
+                                    <button class="action-btn delete">Remove</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            // Add active class to selected tab
+            if (tab === 'employees') {
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.getElementById('employees-tab').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('parts-tab').classList.add('active');
+            }
+        }
+
+        function toggleEmployeeForm() {
+            const form = document.getElementById('employee-form');
+            form.classList.toggle('active');
+            if (form.classList.contains('active')) {
+                document.getElementById('emp-number').focus();
+            }
+        }
+
+        function togglePartForm() {
+            const form = document.getElementById('part-form');
+            form.classList.toggle('active');
+            if (form.classList.contains('active')) {
+                document.getElementById('part-number').focus();
+            }
+        }
+
+        function addEmployee() {
+            const empNumber = document.getElementById('emp-number').value;
+            const firstName = document.getElementById('emp-firstname').value;
+            const lastName = document.getElementById('emp-lastname').value;
+            
+            if (empNumber && firstName && lastName) {
+                // Add to table
+                const tbody = document.getElementById('employee-list');
+                const newRow = tbody.insertRow();
+                newRow.innerHTML = `
+                    <td>${empNumber}</td>
+                    <td>${firstName}</td>
+                    <td>${lastName}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn">Edit</button>
+                            <button class="action-btn delete">Remove</button>
+                        </div>
+                    </td>
+                `;
+                
+                // Clear form and close
+                document.getElementById('emp-number').value = '';
+                document.getElementById('emp-firstname').value = '';
+                document.getElementById('emp-lastname').value = '';
+                toggleEmployeeForm();
+                
+                // Show success message
+                const success = document.getElementById('employee-success');
+                success.classList.add('show');
+                setTimeout(() => success.classList.remove('show'), 3000);
+            }
+        }
+
+        function addPart() {
+            const partNumber = document.getElementById('part-number').value;
+            const target = document.getElementById('part-target').value;
+            
+            if (partNumber && target) {
+                // Add to table
+                const tbody = document.getElementById('part-list');
+                const newRow = tbody.insertRow();
+                const formattedTarget = parseInt(target).toLocaleString();
+                newRow.innerHTML = `
+                    <td>${partNumber}</td>
+                    <td>${formattedTarget}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn">Edit</button>
+                            <button class="action-btn delete">Remove</button>
+                        </div>
+                    </td>
+                `;
+                
+                // Clear form and close
+                document.getElementById('part-number').value = '';
+                document.getElementById('part-target').value = '';
+                togglePartForm();
+                
+                // Show success message
+                const success = document.getElementById('part-success');
+                success.classList.add('show');
+                setTimeout(() => success.classList.remove('show'), 3000);
+            }
+        }
+
+        // Handle delete buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete')) {
+                if (confirm('Are you sure you want to remove this item?')) {
+                    e.target.closest('tr').remove();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+# Agentic Coordination Guide for {{PROJECT_NAME}}
+
+## Project Context
+
+**Current Maturity Level**: {{CURRENT_LEVEL}}  
+**Target Maturity Level**: {{TARGET_LEVEL}}  
+**Assessment Date**: {{ASSESSMENT_DATE}}  
+**Next Review**: {{NEXT_REVIEW}}
+
+## Coordination Philosophy
+
+This project recognizes that humans and AI agents have complementary strengths. Our coordination strategy optimizes the collaboration between human strategic thinking and agent execution capabilities.
+
+### Human Responsibilities
+- Strategic planning and architecture decisions
+- Priority setting and stakeholder communication  
+- Quality assessment and edge case identification
+- Creative problem-solving and innovation
+
+### Agent Responsibilities
+- Pattern application and code generation
+- Comprehensive testing and validation
+- Documentation creation and maintenance
+- Repetitive tasks and refactoring
+
+## Current State Assessment
+
+### Level {{CURRENT_LEVEL}} Characteristics
+
+#### Strengths
+{{STRENGTHS_LIST}}
+
+#### Gaps
+{{GAPS_LIST}}
+
+#### Quick Wins Available
+{{QUICK_WINS}}
+
+## Coordination Patterns
+
+### For Routine Tasks (Level 1-2)
+Use conversational coding for:
+- Single-file modifications
+- Bug fixes with clear scope
+- Documentation updates
+- Test additions
+
+**Process**:
+1. Clearly define the task scope
+2. Provide relevant context
+3. Review agent output
+4. Validate against requirements
+
+### For Complex Features (Level 3+)
+{{#IF_LEVEL_3_PLUS}}
+Use infrastructure-supported development:
+- Multi-file feature implementation
+- Architectural changes
+- System-wide refactoring
+- Performance optimization
+
+**Process**:
+1. Document design in designated location
+2. Break down into manageable tasks
+3. Leverage navigation systems
+4. Coordinate multiple agent sessions
+{{/IF_LEVEL_3_PLUS}}
+
+## Infrastructure Support
+
+### Documentation System
+{{DOCUMENTATION_STATUS}}
+
+**Key Documents**:
+- System Overview: `{{SYSTEM_DOC_PATH}}`
+- Architecture Guide: `{{ARCH_DOC_PATH}}`
+- Navigation Index: `{{NAV_DOC_PATH}}`
+
+### Context Optimization
+
+**Current Efficiency Targets**:
+- Routine tasks: {{ROUTINE_EFFICIENCY}}% context usage
+- Complex features: {{COMPLEX_EFFICIENCY}}% context usage
+- Novel problems: {{NOVEL_EFFICIENCY}}% context usage
+
+### Validation Systems
+
+**Automated Checks**:
+{{VALIDATION_LIST}}
+
+**Manual Reviews Required For**:
+{{MANUAL_REVIEW_LIST}}
+
+## Task Allocation Framework
+
+### Best Suited for Humans
+- {{HUMAN_TASK_1}}
+- {{HUMAN_TASK_2}}
+- {{HUMAN_TASK_3}}
+
+### Best Suited for Agents
+- {{AGENT_TASK_1}}
+- {{AGENT_TASK_2}}
+- {{AGENT_TASK_3}}
+
+### Collaborative Tasks
+- {{COLLAB_TASK_1}}
+- {{COLLAB_TASK_2}}
+- {{COLLAB_TASK_3}}
+
+## Communication Protocols
+
+### Human → Agent
+1. **Define Success Criteria**: Be explicit about expected outcomes
+2. **Provide Context**: Include relevant background information
+3. **Specify Constraints**: Note any limitations or requirements
+4. **Include Examples**: Provide patterns to follow when applicable
+
+### Agent → Human
+1. **Progress Updates**: Regular status on complex tasks
+2. **Decision Points**: Highlight when human input needed
+3. **Assumptions**: Make all assumptions explicit
+4. **Alternatives**: Present options when multiple approaches exist
+
+## Improvement Roadmap
+
+### Next 30 Days
+{{30_DAY_GOALS}}
+
+### Next Quarter
+{{QUARTER_GOALS}}
+
+### Long-term Vision
+{{LONG_TERM_VISION}}
+
+## Success Metrics
+
+### Velocity Metrics
+- Time from concept to implementation: {{VELOCITY_METRIC}}
+- Features per sprint: {{FEATURE_METRIC}}
+
+### Quality Metrics  
+- First-attempt success rate: {{SUCCESS_METRIC}}
+- Review iterations needed: {{REVIEW_METRIC}}
+
+### Efficiency Metrics
+- Context utilization: {{CONTEXT_METRIC}}
+- Session abandonment rate: {{ABANDONMENT_METRIC}}
+
+## Anti-Patterns to Avoid
+
+### In This Codebase
+{{PROJECT_ANTIPATTERNS}}
+
+### General Coordination Anti-Patterns
+- Attempting complex multi-file changes without infrastructure
+- Using agents for tasks requiring human judgment
+- Ignoring validation and testing requirements
+- Providing insufficient context for complex tasks
+
+## Getting Help
+
+### Internal Resources
+- Documentation: `{{DOCS_PATH}}`
+- Examples: `{{EXAMPLES_PATH}}`
+- Team Guidelines: `{{GUIDELINES_PATH}}`
+
+### Framework Resources
+- Philosophy: See main framework philosophy documents
+- Patterns: Review framework pattern library
+- Support: Consult framework community
+
+## Maintenance
+
+This document should be reviewed and updated:
+- After significant infrastructure changes
+- When reaching new maturity levels
+- During retrospectives
+- At scheduled review dates
+
+---
+
+*Generated from Agentic Engineering Coordination Framework v1.0*
+*Customized for {{PROJECT_NAME}} on {{ASSESSMENT_DATE}}*
